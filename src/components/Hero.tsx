@@ -12,8 +12,6 @@ export default function Hero() {
   const shouldReduceMotion = useReducedMotion();
   
   // Distinct layered parallax translations for 3D depth
-  const videoY = useTransform(scrollY, [0, 500], [0, 120]);
-  const overlayY = useTransform(scrollY, [0, 500], [0, 60]);
   const badgeY = useTransform(scrollY, [0, 500], [0, 20]);
   const headlineY = useTransform(scrollY, [0, 500], [0, 45]);
   const descY = useTransform(scrollY, [0, 500], [0, 35]);
@@ -142,35 +140,8 @@ export default function Hero() {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 md:px-12 overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 md:px-12 overflow-hidden bg-gradient-to-b from-red-50/40 via-rose-50/20 to-white"
     >
-      {/* Background Video Layer with reveal transition and scroll parallax */}
-      <motion.div 
-        variants={videoVariants}
-        initial="hidden"
-        animate="visible"
-        style={{ y: shouldReduceMotion ? 0 : videoY }}
-        className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none"
-      >
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute min-w-full min-h-full object-cover scale-105 blur-[8px]"
-        >
-          <source
-            src={siteConfig.heroVideo}
-            type="video/mp4"
-          />
-        </video>
-      </motion.div>
-
-      {/* Overlay gradient layer with separate parallax depth */}
-      <motion.div
-        style={{ y: shouldReduceMotion ? 0 : overlayY }}
-        className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/85 to-white/95 z-0 pointer-events-none"
-      />
 
       {/* Main Centered Content Grid */}
       <motion.div
