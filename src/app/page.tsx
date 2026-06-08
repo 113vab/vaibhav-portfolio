@@ -9,7 +9,6 @@ import Projects from "../components/Projects";
 import GithubSection from "../components/Github";
 import Certifications from "../components/Certifications";
 import Contact from "../components/Contact";
-import AskVaibhavAI from "../components/AskVaibhavAI";
 import Footer from "../components/Footer";
 
 export default function Home() {
@@ -71,9 +70,6 @@ export default function Home() {
         {/* Contact Section */}
         <Contact />
       </main>
-
-      {/* Floating AI Assistant Chatbox */}
-      <AskVaibhavAI />
 
       {/* Footer */}
       <Footer />
