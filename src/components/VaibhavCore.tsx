@@ -144,6 +144,18 @@ export default function VaibhavCore() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const handleSelectSkill = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const matched = coreSkills.find(s => s.name === customEvent.detail);
+      if (matched) {
+        setActiveSkill(matched);
+      }
+    };
+    window.addEventListener("select-skill", handleSelectSkill);
+    return () => window.removeEventListener("select-skill", handleSelectSkill);
+  }, []);
+
   const cx = dimensions.width / 2;
   const cy = dimensions.height / 2;
   const titleWords = "Vaibhav Core Network".split(" ");

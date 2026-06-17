@@ -146,6 +146,40 @@ export default function BackgroundGlow() {
         className="absolute bottom-[20%] right-[10%] w-[40vw] h-[40vw] rounded-[60%_40%_30%_70%_/_50%_60%_40%_50%] bg-gradient-to-tr from-rose-500/1 to-red-500/1 border border-black/[0.01]"
       />
 
+      {/* Ambient Data Environment (SQL / API / Git logs at 2-3% opacity) */}
+      {mounted && [
+        "SELECT COUNT(*), status FROM telemetry WHERE latency > 150 GROUP BY status;",
+        "GET /api/v1/system/nodes?core=vaibhav_core HTTP/1.1 (200 OK)",
+        "commit 86c38dd (HEAD -> main) feat: core network experience mapping",
+        "def optimize_query(sql_str): return sql_str.replace('SELECT *', 'SELECT keys')",
+        "INSERT INTO metrics (timestamp, core_id, rate) VALUES (NOW(), 'reactor_01', 99.8);",
+        "df = pd.read_sql_query(query, conn).dropna().groupby('category').mean()",
+        "POST /api/v1/campus-connect/message sender_id=113vab text='Hello World'",
+        "ssh vaibhav@core-telemetry-cluster -p 22 -i ~/.ssh/identity"
+      ].map((snippet, idx) => {
+        const x = [5, 55, 12, 68, 8, 65, 42, 78][idx];
+        const y = [10, 18, 42, 58, 82, 88, 30, 72][idx];
+        const duration = [55, 65, 60, 75, 70, 62, 68, 72][idx];
+        return (
+          <motion.div
+            key={idx}
+            style={{ left: `${x}%`, top: `${y}%` }}
+            animate={disableAnimations ? {} : {
+              y: [0, -30, 0],
+              x: [0, 20, 0]
+            }}
+            transition={{
+              duration,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute font-mono text-[9px] sm:text-[10px] text-black select-none pointer-events-none opacity-[0.02] whitespace-nowrap"
+          >
+            {snippet}
+          </motion.div>
+        );
+      })}
+
       {/* Grid Overlay */}
       <div 
         className="absolute inset-0 opacity-[0.03] mix-blend-normal"

@@ -77,7 +77,7 @@ export default function Home() {
       ) : (
         <main className="flex-1 w-full max-w-7xl mx-auto z-10 flex flex-col">
           {/* Hero Section */}
-          <Hero />
+          <Hero setRecruiterMode={setRecruiterMode} />
 
           {/* Recruiter-friendly summary card */}
           <RecruiterSummary />

@@ -15,15 +15,93 @@ const renderCampusConnectFlow = () => {
       <div className="absolute w-24 h-24 rounded-full bg-red-500/5 filter blur-xl pointer-events-none" />
       <div className="w-full max-w-sm aspect-[24/10] relative">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 480 200" fill="none">
-          <path d="M 85,100 L 135,100" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
-          <path d="M 205,100 L 255,100" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
-          <path d="M 325,100 C 350,100 350,50 375,50" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
-          <path d="M 325,100 C 350,100 350,150 375,150" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          {/* Background Paths */}
+          <motion.path 
+            d="M 85,100 L 135,100" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.1 }}
+          />
+          <motion.path 
+            d="M 205,100 L 255,100" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.3 }}
+          />
+          <motion.path 
+            d="M 325,100 C 350,100 350,50 375,50" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.5 }}
+          />
+          <motion.path 
+            d="M 325,100 C 350,100 350,150 375,150" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.5 }}
+          />
 
-          <path d="M 85,100 L 135,100" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 205,100 L 255,100" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 325,100 C 350,100 350,50 375,50" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 325,100 C 350,100 350,150 375,150" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
+          {/* Glowing Active Path Underlays */}
+          <motion.path 
+            d="M 85,100 L 135,100" 
+            stroke="url(#redGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.2 }}
+          />
+          <motion.path 
+            d="M 205,100 L 255,100" 
+            stroke="url(#redGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.4 }}
+          />
+          <motion.path 
+            d="M 325,100 C 350,100 350,50 375,50" 
+            stroke="url(#redGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.6 }}
+          />
+          <motion.path 
+            d="M 325,100 C 350,100 350,150 375,150" 
+            stroke="url(#redGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.5, delay: 0.6 }}
+          />
 
           <defs>
             <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -32,18 +110,51 @@ const renderCampusConnectFlow = () => {
             </linearGradient>
           </defs>
 
-          <circle r="4" fill="#ef4444" className="shadow-[0_0_8px_#ef4444]">
+          {/* Glowing packets routing along established connections */}
+          <motion.circle 
+            r="4" 
+            fill="#ef4444" 
+            className="shadow-[0_0_8px_#ef4444]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.2, duration: 0.3 }}
+          >
             <animateMotion dur="2.5s" repeatCount="indefinite" path="M 85,100 L 135,100" />
-          </circle>
-          <circle r="4" fill="#f43f5e" className="shadow-[0_0_8px_#f43f5e]">
+          </motion.circle>
+          <motion.circle 
+            r="4" 
+            fill="#f43f5e" 
+            className="shadow-[0_0_8px_#f43f5e]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.4, duration: 0.3 }}
+          >
             <animateMotion dur="2.5s" repeatCount="indefinite" path="M 205,100 L 255,100" />
-          </circle>
-          <circle r="3.5" fill="#3b82f6" className="shadow-[0_0_8px_#3b82f6]">
+          </motion.circle>
+          <motion.circle 
+            r="3.5" 
+            fill="#3b82f6" 
+            className="shadow-[0_0_8px_#3b82f6]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.6, duration: 0.3 }}
+          >
             <animateMotion dur="3s" repeatCount="indefinite" path="M 325,100 C 350,100 350,50 375,50" />
-          </circle>
-          <circle r="3.5" fill="#10b981" className="shadow-[0_0_8px_#10b981]">
+          </motion.circle>
+          <motion.circle 
+            r="3.5" 
+            fill="#10b981" 
+            className="shadow-[0_0_8px_#10b981]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.6, duration: 0.3 }}
+          >
             <animateMotion dur="3s" repeatCount="indefinite" path="M 325,100 C 350,100 350,150 375,150" />
-          </circle>
+          </motion.circle>
         </svg>
 
         <div style={{ left: "10.4%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-black/5 bg-white shadow-sm flex flex-col items-center justify-center min-w-[65px] pointer-events-none">
@@ -81,13 +192,72 @@ const renderHeritageAIFlow = () => {
       <div className="absolute w-20 h-20 rounded-full bg-rose-500/5 filter blur-xl pointer-events-none" />
       <div className="w-full max-w-sm aspect-[40/12] relative">
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 120" fill="none">
-          <path d="M 85,60 L 115,60" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
-          <path d="M 185,60 L 215,60" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
-          <path d="M 285,60 L 315,60" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          {/* Background Paths */}
+          <motion.path 
+            d="M 85,60 L 115,60" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+          />
+          <motion.path 
+            d="M 185,60 L 215,60" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          />
+          <motion.path 
+            d="M 285,60 L 315,60" 
+            stroke="#000" 
+            strokeOpacity="0.06" 
+            strokeWidth="2" 
+            strokeDasharray="4 4" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          />
 
-          <path d="M 85,60 L 115,60" stroke="url(#roseGrad)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 185,60 L 215,60" stroke="url(#roseGrad)" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 285,60 L 315,60" stroke="url(#roseGrad)" strokeWidth="2" strokeLinecap="round" />
+          {/* Active Path Overlays */}
+          <motion.path 
+            d="M 85,60 L 115,60" 
+            stroke="url(#roseGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.2 }}
+          />
+          <motion.path 
+            d="M 185,60 L 215,60" 
+            stroke="url(#roseGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.4 }}
+          />
+          <motion.path 
+            d="M 285,60 L 315,60" 
+            stroke="url(#roseGrad)" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            initial={{ pathLength: 0 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, delay: 0.6 }}
+          />
 
           <defs>
             <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -96,15 +266,40 @@ const renderHeritageAIFlow = () => {
             </linearGradient>
           </defs>
 
-          <circle r="3.5" fill="#f43f5e" className="shadow-[0_0_8px_#f43f5e]">
+          {/* Dynamic packets routing */}
+          <motion.circle 
+            r="3.5" 
+            fill="#f43f5e" 
+            className="shadow-[0_0_8px_#f43f5e]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.0, duration: 0.3 }}
+          >
             <animateMotion dur="2s" repeatCount="indefinite" path="M 85,60 L 115,60" />
-          </circle>
-          <circle r="3.5" fill="#ec4899" className="shadow-[0_0_8px_#ec4899]">
+          </motion.circle>
+          <motion.circle 
+            r="3.5" 
+            fill="#ec4899" 
+            className="shadow-[0_0_8px_#ec4899]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.2, duration: 0.3 }}
+          >
             <animateMotion dur="2.2s" repeatCount="indefinite" path="M 185,60 L 215,60" />
-          </circle>
-          <circle r="3.5" fill="#3b82f6" className="shadow-[0_0_8px_#3b82f6]">
+          </motion.circle>
+          <motion.circle 
+            r="3.5" 
+            fill="#3b82f6" 
+            className="shadow-[0_0_8px_#3b82f6]"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 1.4, duration: 0.3 }}
+          >
             <animateMotion dur="2.4s" repeatCount="indefinite" path="M 285,60 L 315,60" />
-          </circle>
+          </motion.circle>
         </svg>
 
         <div style={{ left: "12.5%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-black/5 bg-white shadow-sm flex flex-col items-center justify-center min-w-[60px] pointer-events-none">
@@ -646,6 +841,22 @@ export default function Projects() {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const handleSelectProject = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const matched = projects.find(p => p.title === customEvent.detail);
+      if (matched) {
+        if (matched.category === "fullstack") {
+          setFilter("fullstack");
+        } else if (matched.category === "frontend") {
+          setFilter("frontend");
+        }
+      }
+    };
+    window.addEventListener("select-project", handleSelectProject);
+    return () => window.removeEventListener("select-project", handleSelectProject);
   }, []);
 
   const sectionVariants = {

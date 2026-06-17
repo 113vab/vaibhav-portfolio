@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, FileText, Code, Mail, Sparkles, X, CornerDownLeft } from "lucide-react";
+import { Search, FileText, Code, Mail, Sparkles, X, CornerDownLeft, Terminal } from "lucide-react";
 import { GithubIcon as Github, LinkedinIcon as Linkedin } from "./icons/BrandIcons";
 import { siteConfig } from "../data/siteConfig";
 import { trackEvent } from "../utils/analytics";
@@ -145,6 +145,63 @@ export default function CommandPalette({ recruiterMode, setRecruiterMode }: Comm
       icon: <Mail className="w-4 h-4 text-gray-500" />,
       action: () => handleScrollTo("contact"),
     },
+    // Project Search Links
+    {
+      id: "proj-campus-connect",
+      title: "Project: Campus Connect",
+      subtitle: "Fullstack college community portal case study",
+      icon: <Code className="w-4 h-4 text-rose-500" />,
+      action: () => {
+        handleScrollTo("projects");
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent("select-project", { detail: "Campus Connect" }));
+        }, 100);
+      }
+    },
+    {
+      id: "proj-heritage-tourism",
+      title: "Project: Heritage Tourism Platform",
+      subtitle: "SIH 2024 national finalist interactive portal",
+      icon: <Code className="w-4 h-4 text-rose-500" />,
+      action: () => {
+        handleScrollTo("projects");
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent("select-project", { detail: "SIH 2024 Heritage Tourism Platform" }));
+        }, 100);
+      }
+    },
+    // Technology Search Links
+    ...["Python", "SQL", "Power BI", "React", "Node.js", "MongoDB", "AWS", "AI", "Cybersecurity"].map(tech => ({
+      id: `tech-${tech.toLowerCase()}`,
+      title: `Technology: ${tech}`,
+      subtitle: `Audit systems design & projects utilizing ${tech}`,
+      icon: <Terminal className="w-4 h-4 text-emerald-500" />,
+      action: () => {
+        handleScrollTo("vaibhav-core");
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent("select-skill", { detail: tech }));
+        }, 100);
+      }
+    })),
+    // Certifications Search Links
+    {
+      id: "cert-aws",
+      title: "Certification: AWS Academy Graduate",
+      subtitle: "AWS Cloud Foundations - EC2, S3, RDS structures",
+      icon: <FileText className="w-4 h-4 text-amber-500" />,
+      action: () => {
+        handleScrollTo("certifications");
+      }
+    },
+    {
+      id: "cert-sih",
+      title: "Certification: Smart India Hackathon '24",
+      subtitle: "Ministry of Education - national software finalist",
+      icon: <FileText className="w-4 h-4 text-amber-500" />,
+      action: () => {
+        handleScrollTo("certifications");
+      }
+    }
   ];
 
   // Filter commands by search
