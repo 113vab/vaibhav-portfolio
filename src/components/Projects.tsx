@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate, useReducedMotion, useScroll } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ExternalLink, Code } from "lucide-react";
 import { GithubIcon as Github } from "./icons/BrandIcons";
 import { projects } from "../data/projects";
@@ -18,72 +18,6 @@ const filterOptions = [
 function ProjectCard({ project }: { project: Project }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    const checkTouch = () => {
-      setIsTouchDevice(
-        "ontouchstart" in window || navigator.maxTouchPoints > 0
-      );
-    };
-    checkTouch();
-  }, []);
-
-  // Motion values for normalized mouse positions over the card [0, 1]
-  const x = useMotionValue(0.5);
-  const y = useMotionValue(0.5);
-
-  // Motion values in pixels relative to card container for spotlight effect
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  // Soft spring config for tilt rotation & depth offsets (snappy yet organic)
-  const springConfig = { damping: 25, stiffness: 150 };
-  const rotateX = useSpring(useTransform(y, [0, 1], [6, -6]), springConfig);
-  const rotateY = useSpring(useTransform(x, [0, 1], [-6, 6]), springConfig);
-
-  // Layered depth offsets for parallax mockup rendering
-  const depthX1 = useSpring(useTransform(x, [0, 1], [-5, 5]), springConfig);
-  const depthY1 = useSpring(useTransform(y, [0, 1], [-5, 5]), springConfig);
-
-  const depthX2 = useSpring(useTransform(x, [0, 1], [-12, 12]), springConfig);
-  const depthY2 = useSpring(useTransform(y, [0, 1], [-12, 12]), springConfig);
-
-  const depthX3 = useSpring(useTransform(x, [0, 1], [8, -8]), springConfig);
-  const depthY3 = useSpring(useTransform(y, [0, 1], [8, -8]), springConfig);
-
-  // Use a spring value of y to make shadow interpolation transitions smooth on hover leave
-  const springYForShadow = useSpring(y, springConfig);
-  const shadowInterpolation = useTransform(
-    springYForShadow,
-    [0, 1],
-    [
-      "0 20px 40px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.01)",
-      "0 10px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01)"
-    ]
-  );
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isTouchDevice || shouldReduceMotion || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const clientX = e.clientX - rect.left;
-    const clientY = e.clientY - rect.top;
-    
-    // Normalize coordinates for tilt [0, 1]
-    x.set(clientX / width);
-    y.set(clientY / height);
-
-    // Pixel coordinates for spotlight illumination
-    mouseX.set(clientX);
-    mouseY.set(clientY);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0.5);
-    y.set(0.5);
-  };
 
   // Render mock elements based on project title
   const renderVisualMockup = () => {
@@ -95,14 +29,11 @@ function ProjectCard({ project }: { project: Project }) {
           <div className="absolute w-28 h-28 rounded-full bg-red-500/10 filter blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
           
           {/* Layer 1: Main Platform Feed mockup (tilted white card with sidebar + posts) */}
-          <motion.div
+          <div
             style={{
-              x: shouldReduceMotion ? 0 : depthX1,
-              y: shouldReduceMotion ? 0 : depthY1,
-              z: 10,
-              rotate: -3
+              transform: "rotate(-3deg)"
             }}
-            className="w-48 h-28 bg-white rounded-xl shadow-md border border-black/5 p-2.5 flex gap-2"
+            className="w-48 h-28 bg-white rounded-xl shadow-md border border-black/5 p-2.5 flex gap-2 z-10"
           >
             {/* Mock Channels Sidebar */}
             <div className="w-12 border-r border-black/5 pr-1 flex flex-col gap-1.5">
@@ -131,17 +62,14 @@ function ProjectCard({ project }: { project: Project }) {
                 <div className="w-5 h-1.5 rounded bg-black/5" />
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Layer 2: Chat Bubble avatar card (floats higher) */}
-          <motion.div
+          <div
             style={{
-              x: shouldReduceMotion ? 0 : depthX2,
-              y: shouldReduceMotion ? 0 : depthY2,
-              z: 25,
-              rotate: 1
+              transform: "rotate(1deg)"
             }}
-            className="absolute top-5 right-10 w-24 h-11 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-1.5"
+            className="absolute top-5 right-10 w-24 h-11 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-1.5 z-20"
           >
             <div className="w-5.5 h-5.5 rounded-full bg-rose-500/20 flex items-center justify-center text-[7px] font-bold text-rose-600 font-mono">
               VV
@@ -151,40 +79,34 @@ function ProjectCard({ project }: { project: Project }) {
               <div className="w-12 h-1 bg-black/5 rounded" />
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 self-start mt-0.5" />
-          </motion.div>
+          </div>
 
           {/* Layer 3: Marketplace Item Badge */}
-          <motion.div
+          <div
             style={{
-              x: shouldReduceMotion ? 0 : depthX3,
-              y: shouldReduceMotion ? 0 : depthY3,
-              z: 15,
-              rotate: -1
+              transform: "rotate(-1deg)"
             }}
-            className="absolute bottom-5 left-8 px-2.5 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[8px] font-bold font-mono tracking-wider"
+            className="absolute bottom-5 left-8 px-2.5 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[8px] font-bold font-mono tracking-wider z-20"
           >
             MARKETPLACE
-          </motion.div>
+          </div>
         </div>
       );
     }
 
     if (project.title === "SIH 2024 Heritage Tourism Platform") {
       return (
-        <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+        <div className="w-full h-full relative flex items-center justify-center">
           {/* Base Layer: Glow and Grid */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
           <div className="absolute w-28 h-28 rounded-full bg-rose-500/10 filter blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
           
           {/* Layer 1: Travel Card mockup */}
-          <motion.div
+          <div
             style={{
-              x: shouldReduceMotion ? 0 : depthX1,
-              y: shouldReduceMotion ? 0 : depthY1,
-              z: 10,
-              rotate: 2
+              transform: "rotate(2deg)"
             }}
-            className="w-40 h-24 bg-white rounded-xl shadow-md border border-black/5 overflow-hidden flex flex-col"
+            className="w-40 h-24 bg-white rounded-xl shadow-md border border-black/5 overflow-hidden flex flex-col z-10"
           >
             <div className="h-10 bg-gradient-to-br from-pink-200 to-rose-300 relative">
               <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-white/80 backdrop-blur-sm text-[6px] font-bold text-rose-700 font-mono">
@@ -198,36 +120,28 @@ function ProjectCard({ project }: { project: Project }) {
                 <div className="w-6 h-2 bg-emerald-500/15 rounded" />
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Layer 2: Map Pin (floats high) */}
-          <motion.div
-            style={{
-              x: shouldReduceMotion ? 0 : depthX2,
-              y: shouldReduceMotion ? 0 : depthY2,
-              z: 25
-            }}
-            className="absolute top-6 left-16 w-8 h-8 rounded-full bg-white shadow-lg border border-black/5 flex items-center justify-center text-rose-500"
+          <div
+            className="absolute top-6 left-16 w-8 h-8 rounded-full bg-white shadow-lg border border-black/5 flex items-center justify-center text-rose-500 z-20"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
             </span>
-          </motion.div>
+          </div>
 
           {/* Layer 3: Rating/Review Badge */}
-          <motion.div
+          <div
             style={{
-              x: shouldReduceMotion ? 0 : depthX3,
-              y: shouldReduceMotion ? 0 : depthY3,
-              z: 18,
-              rotate: -2
+              transform: "rotate(-2deg)"
             }}
-            className="absolute bottom-6 right-16 px-2 py-1 bg-white rounded shadow-md border border-black/5 text-[7px] font-bold text-gray-700 font-mono flex items-center gap-0.5"
+            className="absolute bottom-6 right-16 px-2 py-1 bg-white rounded shadow-md border border-black/5 text-[7px] font-bold text-gray-700 font-mono flex items-center gap-0.5 z-20"
           >
             <span>⭐</span>
             <span>4.9</span>
-          </motion.div>
+          </div>
         </div>
       );
     }
@@ -245,17 +159,9 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <motion.div
       ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        rotateX: shouldReduceMotion ? 0 : rotateX,
-        rotateY: shouldReduceMotion ? 0 : rotateY,
-        transformStyle: "preserve-3d",
-        boxShadow: shouldReduceMotion ? "none" : shadowInterpolation,
-      }}
-      whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
+      whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group rounded-3xl glass-panel flex flex-col h-full overflow-hidden relative transition-all duration-350 hover:border-red-500/25"
+      className="group rounded-3xl glass-panel flex flex-col h-full overflow-hidden relative transition-all duration-350 hover:border-red-500/25 shadow-md hover:shadow-xl"
     >
       {/* Reflective Sheen Glare Overlay */}
       {!shouldReduceMotion && (
@@ -276,21 +182,8 @@ function ProjectCard({ project }: { project: Project }) {
         />
       )}
 
-      {/* Spotlight Illumination Overlay */}
-      {!isTouchDevice && !shouldReduceMotion && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-          style={{
-            background: useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 59, 48, 0.05), transparent 80%)`,
-          }}
-        />
-      )}
-
-      {/* Visual mockup container with Image Scaling */}
-      <div 
-        className={`relative h-48 w-full overflow-hidden ${project.imageUrl} flex items-center justify-center border-b border-black/[0.05] z-10`}
-        style={{ transformStyle: "preserve-3d" }}
-      >
+      {/* Visual mockup container */}
+      <div className="relative h-48 w-full overflow-hidden flex items-center justify-center border-b border-black/[0.05] z-10">
         <motion.div 
           initial={shouldReduceMotion ? { opacity: 0 } : { clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)", scale: 1.08, opacity: 0 }}
           whileInView={shouldReduceMotion ? { opacity: 1 } : { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", scale: 1, opacity: 1 }}
@@ -298,7 +191,6 @@ function ProjectCard({ project }: { project: Project }) {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
           whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
           className="w-full h-full"
-          style={{ transformStyle: "preserve-3d" }}
         >
           {renderVisualMockup()}
         </motion.div>
@@ -325,7 +217,7 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
 
       {/* Info Container */}
-      <div className="p-6 md:p-8 flex flex-col flex-1 justify-between relative z-10" style={{ transform: "translateZ(15px)", transformStyle: "preserve-3d" }}>
+      <div className="p-6 md:p-8 flex flex-col flex-1 justify-between relative z-10">
         <div>
           <h3 className="text-xl font-bold text-black mb-3 group-hover:text-red-500 transition-colors duration-300">
             <Link href={`/projects/${project.id}`}>
@@ -351,7 +243,7 @@ function ProjectCard({ project }: { project: Project }) {
             ))}
           </div>
 
-          {/* Action Links with CSS underline reveals */}
+          {/* Action Links */}
           <div className="flex gap-4 border-t border-black/5 pt-5 overflow-hidden">
             <motion.a
               href={project.githubUrl}
@@ -383,112 +275,18 @@ function ProjectCard({ project }: { project: Project }) {
 function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Project; shouldReduceMotion: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    const checkTouch = () => {
-      setIsTouchDevice(
-        "ontouchstart" in window || navigator.maxTouchPoints > 0
-      );
-    };
-    checkTouch();
-  }, []);
-
-  // useScroll targetting the container
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  // 1. Scroll-linked mapping (subtle scale mapping)
-  const scale = useTransform(scrollYProgress, [0.1, 0.45, 0.8], [0.95, 1.02, 0.96]);
-  
-  // Progressive reveal for feature cards
-  const card1Opacity = useTransform(scrollYProgress, [0.15, 0.3], [0, 1]);
-  const card1Y = useTransform(scrollYProgress, [0.15, 0.3], [20, 0]);
-  
-  const card2Opacity = useTransform(scrollYProgress, [0.25, 0.4], [0, 1]);
-  const card2Y = useTransform(scrollYProgress, [0.25, 0.4], [20, 0]);
-  
-  const card3Opacity = useTransform(scrollYProgress, [0.35, 0.5], [0, 1]);
-  const card3Y = useTransform(scrollYProgress, [0.35, 0.5], [20, 0]);
-
-  // Tech stack sequential fade-in
-  const techOpacity = useTransform(scrollYProgress, [0.45, 0.55], [0, 1]);
-  const techY = useTransform(scrollYProgress, [0.45, 0.55], [15, 0]);
-
-  // CTA buttons reveal last
-  const ctaOpacity = useTransform(scrollYProgress, [0.55, 0.65], [0, 1]);
-  const ctaY = useTransform(scrollYProgress, [0.55, 0.65], [15, 0]);
-
-  // Fallback checks for prefers-reduced-motion
-  const mockupScale = shouldReduceMotion ? 1 : scale;
-  const c1Opacity = shouldReduceMotion ? 1 : card1Opacity;
-  const c1Y = shouldReduceMotion ? 0 : card1Y;
-  const c2Opacity = shouldReduceMotion ? 1 : card2Opacity;
-  const c2Y = shouldReduceMotion ? 0 : card2Y;
-  const c3Opacity = shouldReduceMotion ? 1 : card3Opacity;
-  const c3Y = shouldReduceMotion ? 0 : card3Y;
-  const tOpacity = shouldReduceMotion ? 1 : techOpacity;
-  const tY = shouldReduceMotion ? 0 : techY;
-  const btOpacity = shouldReduceMotion ? 1 : ctaOpacity;
-  const btY = shouldReduceMotion ? 0 : ctaY;
-
-  // 2. Mouse-based tilt values
-  const x = useMotionValue(0.5);
-  const y = useMotionValue(0.5);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 25, stiffness: 150 };
-  const rotateX = useSpring(useTransform(y, [0, 1], [4, -4]), springConfig);
-  const rotateY = useSpring(useTransform(x, [0, 1], [-4, 4]), springConfig);
-
-  const depthX1 = useSpring(useTransform(x, [0, 1], [-4, 4]), springConfig);
-  const depthY1 = useSpring(useTransform(y, [0, 1], [-4, 4]), springConfig);
-  const depthX2 = useSpring(useTransform(x, [0, 1], [-9, 9]), springConfig);
-  const depthY2 = useSpring(useTransform(y, [0, 1], [-9, 9]), springConfig);
-  const depthX3 = useSpring(useTransform(x, [0, 1], [6, -6]), springConfig);
-  const depthY3 = useSpring(useTransform(y, [0, 1], [6, -6]), springConfig);
-
-  const springYForShadow = useSpring(y, springConfig);
-  const shadowInterpolation = useTransform(
-    springYForShadow,
-    [0, 1],
-    [
-      "0 20px 45px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.01)",
-      "0 10px 25px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01)"
-    ]
-  );
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isTouchDevice || shouldReduceMotion || !cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    x.set((e.clientX - rect.left) / rect.width);
-    y.set((e.clientY - rect.top) / rect.height);
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0.5);
-    y.set(0.5);
-  };
 
   const renderFeaturedMockup = () => {
     return (
-      <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: "preserve-3d" }}>
+      <div className="w-full h-full relative flex items-center justify-center">
         {/* Base Layer: Grid & Glow */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
         <div className="absolute w-36 h-36 rounded-full bg-red-500/10 filter blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
         
         {/* Layer 1: Main Platform Feed mockup */}
-        <motion.div
+        <div
           style={{
-            x: shouldReduceMotion ? 0 : depthX1,
-            y: shouldReduceMotion ? 0 : depthY1,
-            z: 15,
-            rotate: -2
+            transform: "rotate(-2deg)"
           }}
           className="w-56 h-32 bg-white rounded-xl shadow-md border border-black/5 p-3 flex gap-2.5 z-10"
         >
@@ -519,15 +317,12 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
               <div className="w-6 h-2 rounded bg-black/5" />
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Layer 2: Chat Bubble avatar card (floats higher) */}
-        <motion.div
+        <div
           style={{
-            x: shouldReduceMotion ? 0 : depthX2,
-            y: shouldReduceMotion ? 0 : depthY2,
-            z: 35,
-            rotate: 2
+            transform: "rotate(2deg)"
           }}
           className="absolute top-4 right-6 w-28 h-12 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-2 z-20"
         >
@@ -539,20 +334,17 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
             <div className="w-14 h-1 bg-black/5 rounded" />
           </div>
           <span className="w-2 h-2 rounded-full bg-emerald-500 self-start mt-0.5" />
-        </motion.div>
+        </div>
 
         {/* Layer 3: Marketplace Item Badge */}
-        <motion.div
+        <div
           style={{
-            x: shouldReduceMotion ? 0 : depthX3,
-            y: shouldReduceMotion ? 0 : depthY3,
-            z: 25,
-            rotate: -1
+            transform: "rotate(-1deg)"
           }}
           className="absolute bottom-4 left-6 px-3 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[9px] font-bold font-mono tracking-wider z-20"
         >
           MARKETPLACE
-        </motion.div>
+        </div>
       </div>
     );
   };
@@ -566,20 +358,12 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
   return (
     <div ref={containerRef} className="mb-24 md:mb-32">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14 items-center">
-        {/* Left Side: Mockup Visual (scroll scaled and mouse tilted) */}
+        {/* Left Side: Mockup Visual */}
         <div className="lg:col-span-6 flex justify-center items-center">
           <motion.div
             ref={cardRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            style={{
-              scale: mockupScale,
-              rotateX: shouldReduceMotion ? 0 : rotateX,
-              rotateY: shouldReduceMotion ? 0 : rotateY,
-              transformStyle: "preserve-3d",
-              boxShadow: shouldReduceMotion ? "none" : shadowInterpolation,
-            }}
-            className="group w-full max-w-lg aspect-[4/3] rounded-3xl glass-panel relative border border-black/5 flex items-center justify-center p-6 overflow-hidden transition-colors duration-350 hover:border-red-500/20"
+            whileHover={{ scale: 1.01 }}
+            className="group w-full max-w-lg aspect-[4/3] rounded-3xl glass-panel relative border border-black/5 flex items-center justify-center p-6 overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
           >
             {/* Ambient reflection sheen loop */}
             {!shouldReduceMotion && (
@@ -597,18 +381,8 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
               />
             )}
 
-            {/* Spotlight reflection */}
-            {!isTouchDevice && !shouldReduceMotion && (
-              <motion.div
-                className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-                style={{
-                  background: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(255, 59, 48, 0.04), transparent 80%)`,
-                }}
-              />
-            )}
-
             {/* Inner mockup container */}
-            <div className="w-full h-full relative" style={{ transformStyle: "preserve-3d" }}>
+            <div className="w-full h-full relative">
               {renderFeaturedMockup()}
             </div>
             
@@ -638,13 +412,13 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
           {/* Progressive Feature Cards */}
           <div className="space-y-4 mb-8">
             {features.map((feat, idx) => {
-              const cardOpacity = idx === 0 ? c1Opacity : idx === 1 ? c2Opacity : c3Opacity;
-              const cardY = idx === 0 ? c1Y : idx === 1 ? c2Y : c3Y;
-
               return (
                 <motion.div
                   key={feat.title}
-                  style={{ opacity: cardOpacity, y: cardY }}
+                  initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
                   className="p-4 rounded-2xl bg-black/[0.01] border border-black/[0.03] flex gap-4 hover:bg-white hover:border-red-500/10 hover:shadow-md hover:shadow-red-500/[0.01] transition-all duration-300 group/feat"
                 >
                   <div className="w-8 h-8 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0 mt-0.5 group-hover/feat:bg-red-500/15 transition-all">
@@ -661,7 +435,10 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
 
           {/* Technology stack fades in sequentially */}
           <motion.div
-            style={{ opacity: tOpacity, y: tY }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.3 }}
             className="mb-8 pt-6 border-t border-black/5"
           >
             <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest font-mono mb-3.5">
@@ -681,7 +458,10 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
 
           {/* CTA buttons reveal last */}
           <motion.div
-            style={{ opacity: btOpacity, y: btY }}
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-wrap gap-4"
           >
             <Magnetic>
@@ -784,19 +564,6 @@ export default function Projects() {
   const [filter, setFilter] = useState("all");
   const shouldReduceMotion = useReducedMotion();
 
-  // Scroll choreography for section overlap and gentle exits
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const sectionTranslateY = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [shouldReduceMotion ? 0 : 40, 0, 0, shouldReduceMotion ? 0 : -40]
-  );
-
   const sectionVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -831,14 +598,22 @@ export default function Projects() {
       className="py-28 md:py-36 px-6 md:px-12 relative"
     >
       <motion.div
-        style={{
-          opacity: sectionOpacity,
-          y: sectionTranslateY
-        }}
-        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
+        variants={{
+          hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 25 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.8,
+              ease: [0.16, 1, 0.3, 1] as const,
+              staggerChildren: 0.08,
+              delayChildren: 0.05
+            }
+          }
+        }}
         className="max-w-7xl mx-auto z-10 relative"
       >
         
