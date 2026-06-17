@@ -7,7 +7,7 @@ import Hero from "../components/Hero";
 import RecruiterSummary from "../components/RecruiterSummary";
 import About from "../components/About";
 import TimelineSection from "../components/Timeline";
-import Skills from "../components/Skills";
+import VaibhavCore from "../components/VaibhavCore";
 import Projects from "../components/Projects";
 import GithubSection from "../components/Github";
 import Certifications from "../components/Certifications";
@@ -88,8 +88,8 @@ export default function Home() {
           {/* Career Timeline Section */}
           <TimelineSection />
 
-          {/* Skills Section */}
-          <Skills />
+          {/* Skills Section (Vaibhav Core Network Experience) */}
+          <VaibhavCore />
 
           {/* Projects Section */}
           <Projects />
