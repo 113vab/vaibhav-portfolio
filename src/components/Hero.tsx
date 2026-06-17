@@ -1,6 +1,6 @@
 "use client";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ArrowDown, Sparkles, FolderGit2, FileDown, Mail } from "lucide-react";
 import { profile } from "../data/profile";
 import { siteConfig } from "../data/siteConfig";
@@ -10,8 +10,18 @@ export default function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
   
-  // Distinct layered parallax translations for 3D depth
+  // Layered depth translations
   const badgeY = useTransform(scrollY, [0, 500], [0, 20]);
   const headlineY = useTransform(scrollY, [0, 500], [0, 45]);
   const descY = useTransform(scrollY, [0, 500], [0, 35]);
@@ -19,7 +29,15 @@ export default function Hero() {
   const skillsY = useTransform(scrollY, [0, 500], [0, 15]);
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
-  // Entrance animations sequence - finishes within 800ms-1200ms
+  // Mobile bypass for performance
+  const finalBadgeY = isMobile || shouldReduceMotion ? 0 : badgeY;
+  const finalHeadlineY = isMobile || shouldReduceMotion ? 0 : headlineY;
+  const finalDescY = isMobile || shouldReduceMotion ? 0 : descY;
+  const finalCtaY = isMobile || shouldReduceMotion ? 0 : ctaY;
+  const finalSkillsY = isMobile || shouldReduceMotion ? 0 : skillsY;
+  const finalOpacity = isMobile ? 1 : opacity;
+
+  // Entrance animations sequence
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -31,7 +49,6 @@ export default function Hero() {
     },
   };
 
-  // Status badge, description, and sub-containers
   const itemVariants = {
     hidden: { y: shouldReduceMotion ? 0 : 20, opacity: 0 },
     visible: {
@@ -46,7 +63,6 @@ export default function Hero() {
     },
   };
 
-  // Headline line-by-line specific spring config (even smoother)
   const lineVariants = {
     hidden: { y: shouldReduceMotion ? 0 : "100%", opacity: 0 },
     visible: {
@@ -58,14 +74,6 @@ export default function Hero() {
         damping: 16,
         mass: 0.7,
       },
-    },
-  };
-
-  const videoVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 0.75,
-      transition: { duration: 0.8, ease: "easeOut" as const },
     },
   };
 
@@ -97,7 +105,7 @@ export default function Hero() {
     visible: {
       opacity: 1,
       transition: {
-        delayChildren: 0.5, // Skills appear last in the sequence
+        delayChildren: 0.5,
         staggerChildren: 0.06,
       },
     },
@@ -142,28 +150,90 @@ export default function Hero() {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 md:px-12 overflow-hidden bg-gradient-to-b from-red-50/40 via-rose-50/20 to-white"
     >
+      {/* Layer 1: Background Atmosphere is BackgroundGlow and section gradients */}
+
+      {/* Layer 2: Floating Glass Cards (Hidden on mobile to ensure performance) */}
+      {!isMobile && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          {/* Analytics Chart Mockup Card */}
+          <motion.div
+            animate={{
+              y: [0, -12, 0],
+              rotate: [-1, 1, -1],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-[20%] left-[8%] w-44 p-4 rounded-2xl glass-panel border border-white/20 shadow-xl backdrop-blur-lg flex flex-col gap-2 bg-white/40"
+            style={{
+              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)",
+            }}
+          >
+            <div className="flex justify-between items-center">
+              <div className="w-10 h-2 bg-black/10 rounded" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            </div>
+            <div className="flex gap-1.5 items-end h-10 mt-1">
+              <div className="w-full h-[60%] bg-red-500/20 rounded-sm" />
+              <div className="w-full h-[80%] bg-red-500/30 rounded-sm" />
+              <div className="w-full h-[40%] bg-red-500/20 rounded-sm" />
+              <div className="w-full h-[95%] bg-gradient-to-t from-red-500 to-rose-500 rounded-sm" />
+            </div>
+          </motion.div>
+
+          {/* Database Query Mockup Card */}
+          <motion.div
+            animate={{
+              y: [0, 15, 0],
+              rotate: [1, -1, 1],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+            className="absolute bottom-[25%] right-[8%] w-48 p-4 rounded-2xl glass-panel border border-white/20 shadow-xl backdrop-blur-lg flex flex-col gap-1.5 font-mono text-[9px] text-gray-400 bg-white/40"
+            style={{
+              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)",
+            }}
+          >
+            <div className="flex gap-1 mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+            </div>
+            <div><span className="text-red-500">const</span>{" query = () => {"}</div>
+            <div className="pl-3">return db.select()</div>
+            <div className="pl-6 text-rose-500">.from(<span className="text-gray-500">"users"</span>)</div>
+            <div>{"}"}</div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Main Centered Content Grid */}
       <motion.div
-        style={{ opacity }}
+        style={{ opacity: finalOpacity }}
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="max-w-5xl mx-auto w-full flex flex-col items-center justify-center text-center z-10 relative"
       >
-        {/* Top Mini Badge (Status badge) */}
+        {/* Layer 3: Status Badge */}
         <motion.div
           variants={itemVariants}
-          style={{ y: shouldReduceMotion ? 0 : badgeY }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-xs font-bold uppercase tracking-widest text-red-600 border border-red-500/15 mb-8 shadow-sm backdrop-blur-md"
+          style={{ y: finalBadgeY }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-xs font-bold uppercase tracking-widest text-red-600 border border-red-500/15 mb-8 shadow-sm bg-white/50 backdrop-blur-md"
         >
           <Sparkles className="w-4 h-4 text-red-500 animate-pulse" />
           <span>{profile.name}</span>
         </motion.div>
 
-        {/* Big Startup Headline - Reveals word-by-word */}
+        {/* Layer 4: Headline */}
         <motion.h1 
-          style={{ y: shouldReduceMotion ? 0 : headlineY }}
+          style={{ y: finalHeadlineY }}
           className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-extrabold tracking-tighter leading-[1.1] mb-6 text-black select-none flex flex-col items-center"
         >
           <span className="block overflow-hidden py-1 flex flex-wrap justify-center gap-x-3 sm:gap-x-4">
@@ -206,22 +276,22 @@ export default function Hero() {
           </span>
         </motion.h1>
 
-        {/* Brief Intro Subtitle (Description fades upward) */}
+        {/* Description Description */}
         <motion.p
           variants={itemVariants}
-          style={{ y: shouldReduceMotion ? 0 : descY }}
+          style={{ y: finalDescY }}
           className="text-base sm:text-lg md:text-xl text-gray-500 max-w-2xl mb-12 leading-relaxed font-normal px-4"
         >
           {profile.role} specializing in Data Analytics, Business Intelligence, and Full-Stack Development.
         </motion.p>
 
-        {/* Action Buttons Row - Staggers into view */}
+        {/* Layer 5: CTA Buttons Row */}
         <motion.div
           variants={ctaContainerVariants}
-          style={{ y: shouldReduceMotion ? 0 : ctaY }}
+          style={{ y: finalCtaY }}
           className="flex flex-wrap justify-center items-center gap-4 px-4 w-full"
         >
-          {/* View Work Button wrapped in Magnetic */}
+          {/* View Work Button */}
           <motion.div variants={ctaItemVariants}>
             <Magnetic>
               <motion.a
@@ -253,7 +323,7 @@ export default function Hero() {
             </Magnetic>
           </motion.div>
 
-          {/* Download Resume Button wrapped in Magnetic */}
+          {/* Download Resume Button */}
           <motion.div variants={ctaItemVariants}>
             <Magnetic>
               <motion.a
@@ -285,7 +355,7 @@ export default function Hero() {
             </Magnetic>
           </motion.div>
 
-          {/* Contact Button wrapped in Magnetic */}
+          {/* Contact Button */}
           <motion.div variants={ctaItemVariants}>
             <Magnetic>
               <motion.a
@@ -318,10 +388,10 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Floating Skill Badges (Appear last, gently drift) */}
+        {/* Floating Skill Badges */}
         <motion.div
           variants={skillsContainerVariants}
-          style={{ y: shouldReduceMotion ? 0 : skillsY }}
+          style={{ y: finalSkillsY }}
           className="flex flex-wrap justify-center items-center gap-3 mt-16 max-w-xl px-4"
         >
           {["Python", "SQL", "React", "Power BI"].map((skill, index) => (
@@ -331,7 +401,7 @@ export default function Hero() {
               className="text-[11px] sm:text-xs font-semibold text-gray-500 font-mono px-3.5 py-1.5 rounded-full border border-black/5 bg-white/40 shadow-sm backdrop-blur-md"
             >
               <motion.div
-                animate={shouldReduceMotion ? {} : {
+                animate={shouldReduceMotion || isMobile ? {} : {
                   y: [0, index % 2 === 0 ? -6 : -4, 0],
                   x: [0, index % 2 === 0 ? 4 : -4, 0],
                   transition: {

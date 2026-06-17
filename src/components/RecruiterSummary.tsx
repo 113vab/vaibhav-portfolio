@@ -2,11 +2,9 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useReducedMotion, useMotionTemplate, useMotionValue } from "framer-motion";
-import { GraduationCap, Briefcase, Code, Download, Mail, Phone, ExternalLink, Sparkles, CheckCircle } from "lucide-react";
+import { GraduationCap, Briefcase, Code, Download, Mail, Sparkles, CheckCircle } from "lucide-react";
 import { profile } from "../data/profile";
 import { siteConfig } from "../data/siteConfig";
-import { experiences } from "../data/experience";
-import { projects } from "../data/projects";
 import { trackEvent } from "../utils/analytics";
 import Magnetic from "./motion/Magnetic";
 
@@ -14,21 +12,25 @@ export default function RecruiterSummary() {
   const cardRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkTouch = () => {
+    const checkDevice = () => {
       setIsTouchDevice(
         "ontouchstart" in window || navigator.maxTouchPoints > 0
       );
+      setIsMobile(window.innerWidth < 768);
     };
-    checkTouch();
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+    return () => window.removeEventListener("resize", checkDevice);
   }, []);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (isTouchDevice || shouldReduceMotion || !cardRef.current) return;
+    if (isMobile || isTouchDevice || shouldReduceMotion || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
@@ -42,7 +44,6 @@ export default function RecruiterSummary() {
     trackEvent("Recruiter Contact Triggered", { medium });
   };
 
-  // Get first 6 key skills for quick preview
   const keySkills = ["React", "Node.js", "Express", "Python", "SQL", "Power BI", "Looker Studio"];
 
   return (
@@ -55,10 +56,10 @@ export default function RecruiterSummary() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="rounded-3xl border border-red-500/10 bg-gradient-to-br from-red-500/[0.01] via-rose-500/[0.01] to-orange-500/[0.01] p-8 md:p-10 relative overflow-hidden group shadow-lg shadow-red-500/[0.01] hover:border-red-500/20 hover:shadow-red-500/[0.02] transition-all duration-300"
+        className="rounded-3xl border border-red-500/10 bg-gradient-to-br from-red-500/[0.01] via-rose-500/[0.01] to-orange-500/[0.01] p-8 md:p-10 relative overflow-hidden group shadow-lg shadow-red-500/[0.01] hover:border-red-500/20 hover:shadow-red-500/[0.02] transition-all duration-300 bg-white/40"
       >
-        {/* Spotlight overlay */}
-        {!isTouchDevice && !shouldReduceMotion && (
+        {/* Spotlight overlay (desktop only) */}
+        {!isMobile && !isTouchDevice && !shouldReduceMotion && (
           <motion.div
             className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
             style={{
@@ -69,7 +70,7 @@ export default function RecruiterSummary() {
 
         {/* Decorative corner tag */}
         <div className="absolute top-4 right-4 flex items-center gap-1 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-full text-[9px] font-bold text-red-500 font-mono tracking-widest uppercase">
-          <Sparkles className="w-3 h-3 animate-pulse" /> 30s Summary
+          <Sparkles className="w-3.5 h-3.5 animate-pulse" /> 30s Summary
         </div>
 
         {/* Layout Grid */}
@@ -82,7 +83,7 @@ export default function RecruiterSummary() {
               <h3 className="text-2xl sm:text-3xl font-extrabold text-black mt-1 mb-2">
                 {profile.name}
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed font-normal mb-6">
+              <p className="text-sm text-gray-600 leading-relaxed font-normal mb-6">
                 Active B.Tech student at Sanskriti University, specializing in software engineering, PostgreSQL querying, and BI dashboards.
               </p>
 
@@ -118,7 +119,7 @@ export default function RecruiterSummary() {
                   onClick={handleResumeDownload}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 text-white font-bold text-xs shadow-md shadow-red-500/10 hover:shadow-red-500/25 transition-all duration-300 group/btn cursor-pointer"
                 >
-                  Download Resume <Download className="w-4 h-4 group-hover/btn:translate-y-0.5 transition-transform" />
+                  Download Resume
                 </a>
               </Magnetic>
 

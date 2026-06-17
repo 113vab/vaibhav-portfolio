@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useMotionTemplate, useReducedMotion } from "framer-motion";
 import { ExternalLink, Code } from "lucide-react";
 import { GithubIcon as Github } from "./icons/BrandIcons";
 import { projects } from "../data/projects";
@@ -18,20 +18,87 @@ const filterOptions = [
 function ProjectCard({ project }: { project: Project }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTouchDevice(
+        "ontouchstart" in window || navigator.maxTouchPoints > 0
+      );
+    };
+    checkViewport();
+    window.addEventListener("resize", checkViewport);
+    return () => window.removeEventListener("resize", checkViewport);
+  }, []);
+
+  // Motion values for normalized mouse positions over the card [0, 1]
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+
+  // Motion values in pixels relative to card container for spotlight effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Soft spring config for tilt rotation & depth offsets (2-3 degrees max)
+  const springConfig = { damping: 25, stiffness: 150 };
+  const rotateX = useSpring(useTransform(y, [0, 1], [2.5, -2.5]), springConfig);
+  const rotateY = useSpring(useTransform(x, [0, 1], [-2.5, 2.5]), springConfig);
+
+  // Layered depth offsets for parallax mockup rendering (only for desktop)
+  const depthX1 = useSpring(useTransform(x, [0, 1], [-2.5, 2.5]), springConfig);
+  const depthY1 = useSpring(useTransform(y, [0, 1], [-2.5, 2.5]), springConfig);
+
+  const depthX2 = useSpring(useTransform(x, [0, 1], [-6, 6]), springConfig);
+  const depthY2 = useSpring(useTransform(y, [0, 1], [-6, 6]), springConfig);
+
+  const depthX3 = useSpring(useTransform(x, [0, 1], [4, -4]), springConfig);
+  const depthY3 = useSpring(useTransform(y, [0, 1], [4, -4]), springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile || isTouchDevice || shouldReduceMotion || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+    
+    x.set(clientX / width);
+    y.set(clientY / height);
+    mouseX.set(clientX);
+    mouseY.set(clientY);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0.5);
+    y.set(0.5);
+  };
 
   // Render mock elements based on project title
   const renderVisualMockup = () => {
+    // Parallax values or flat static replacements for mobile
+    const moveX1 = isMobile || shouldReduceMotion ? 0 : depthX1;
+    const moveY1 = isMobile || shouldReduceMotion ? 0 : depthY1;
+    const moveX2 = isMobile || shouldReduceMotion ? 0 : depthX2;
+    const moveY2 = isMobile || shouldReduceMotion ? 0 : depthY2;
+    const moveX3 = isMobile || shouldReduceMotion ? 0 : depthX3;
+    const moveY3 = isMobile || shouldReduceMotion ? 0 : depthY3;
+
     if (project.title === "Campus Connect") {
       return (
-        <div className="w-full h-full relative flex items-center justify-center">
+        <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
           {/* Base Layer: Grid & Glow */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
           <div className="absolute w-28 h-28 rounded-full bg-red-500/10 filter blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
           
-          {/* Layer 1: Main Platform Feed mockup (tilted white card with sidebar + posts) */}
-          <div
+          {/* Layer 1: Main Platform Feed mockup (tilted white card) */}
+          <motion.div
             style={{
-              transform: "rotate(-3deg)"
+              x: moveX1,
+              y: moveY1,
+              z: isMobile ? 0 : 8,
+              rotate: -3
             }}
             className="w-48 h-28 bg-white rounded-xl shadow-md border border-black/5 p-2.5 flex gap-2 z-10"
           >
@@ -62,12 +129,15 @@ function ProjectCard({ project }: { project: Project }) {
                 <div className="w-5 h-1.5 rounded bg-black/5" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Layer 2: Chat Bubble avatar card (floats higher) */}
-          <div
+          {/* Layer 2: Chat Bubble avatar card */}
+          <motion.div
             style={{
-              transform: "rotate(1deg)"
+              x: moveX2,
+              y: moveY2,
+              z: isMobile ? 0 : 20,
+              rotate: 1
             }}
             className="absolute top-5 right-10 w-24 h-11 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-1.5 z-20"
           >
@@ -79,32 +149,38 @@ function ProjectCard({ project }: { project: Project }) {
               <div className="w-12 h-1 bg-black/5 rounded" />
             </div>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 self-start mt-0.5" />
-          </div>
+          </motion.div>
 
           {/* Layer 3: Marketplace Item Badge */}
-          <div
+          <motion.div
             style={{
-              transform: "rotate(-1deg)"
+              x: moveX3,
+              y: moveY3,
+              z: isMobile ? 0 : 12,
+              rotate: -1
             }}
             className="absolute bottom-5 left-8 px-2.5 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[8px] font-bold font-mono tracking-wider z-20"
           >
             MARKETPLACE
-          </div>
+          </motion.div>
         </div>
       );
     }
 
     if (project.title === "SIH 2024 Heritage Tourism Platform") {
       return (
-        <div className="w-full h-full relative flex items-center justify-center">
+        <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
           {/* Base Layer: Glow and Grid */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
           <div className="absolute w-28 h-28 rounded-full bg-rose-500/10 filter blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
           
           {/* Layer 1: Travel Card mockup */}
-          <div
+          <motion.div
             style={{
-              transform: "rotate(2deg)"
+              x: moveX1,
+              y: moveY1,
+              z: isMobile ? 0 : 8,
+              rotate: 2
             }}
             className="w-40 h-24 bg-white rounded-xl shadow-md border border-black/5 overflow-hidden flex flex-col z-10"
           >
@@ -120,28 +196,36 @@ function ProjectCard({ project }: { project: Project }) {
                 <div className="w-6 h-2 bg-emerald-500/15 rounded" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Layer 2: Map Pin (floats high) */}
-          <div
+          {/* Layer 2: Map Pin */}
+          <motion.div
+            style={{
+              x: moveX2,
+              y: moveY2,
+              z: isMobile ? 0 : 20
+            }}
             className="absolute top-6 left-16 w-8 h-8 rounded-full bg-white shadow-lg border border-black/5 flex items-center justify-center text-rose-500 z-20"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
             </span>
-          </div>
+          </motion.div>
 
           {/* Layer 3: Rating/Review Badge */}
-          <div
+          <motion.div
             style={{
-              transform: "rotate(-2deg)"
+              x: moveX3,
+              y: moveY3,
+              z: isMobile ? 0 : 15,
+              rotate: -2
             }}
             className="absolute bottom-6 right-16 px-2 py-1 bg-white rounded shadow-md border border-black/5 text-[7px] font-bold text-gray-700 font-mono flex items-center gap-0.5 z-20"
           >
             <span>⭐</span>
             <span>4.9</span>
-          </div>
+          </motion.div>
         </div>
       );
     }
@@ -159,9 +243,16 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <motion.div
       ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: isMobile || shouldReduceMotion ? 0 : rotateX,
+        rotateY: isMobile || shouldReduceMotion ? 0 : rotateY,
+        transformStyle: isMobile ? "flat" : "preserve-3d",
+      }}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group rounded-3xl glass-panel flex flex-col h-full overflow-hidden relative transition-all duration-350 hover:border-red-500/25 shadow-md hover:shadow-xl"
+      className="group rounded-3xl glass-panel flex flex-col h-full overflow-hidden relative transition-all duration-350 hover:border-red-500/25 shadow-md hover:shadow-xl bg-white/40"
     >
       {/* Reflective Sheen Glare Overlay */}
       {!shouldReduceMotion && (
@@ -182,8 +273,21 @@ function ProjectCard({ project }: { project: Project }) {
         />
       )}
 
+      {/* Spotlight Illumination Overlay (Desktop Only) */}
+      {!isMobile && !isTouchDevice && !shouldReduceMotion && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+          style={{
+            background: useMotionTemplate`radial-gradient(350px circle at ${mouseX}px ${mouseY}px, rgba(255, 59, 48, 0.05), transparent 80%)`,
+          }}
+        />
+      )}
+
       {/* Visual mockup container */}
-      <div className="relative h-48 w-full overflow-hidden flex items-center justify-center border-b border-black/[0.05] z-10">
+      <div 
+        className="relative h-48 w-full overflow-hidden flex items-center justify-center border-b border-black/[0.05] z-10"
+        style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
+      >
         <motion.div 
           initial={shouldReduceMotion ? { opacity: 0 } : { clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)", scale: 1.08, opacity: 0 }}
           whileInView={shouldReduceMotion ? { opacity: 1 } : { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", scale: 1, opacity: 1 }}
@@ -191,6 +295,7 @@ function ProjectCard({ project }: { project: Project }) {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] as const }}
           whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
           className="w-full h-full"
+          style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}
         >
           {renderVisualMockup()}
         </motion.div>
@@ -217,7 +322,13 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
 
       {/* Info Container */}
-      <div className="p-6 md:p-8 flex flex-col flex-1 justify-between relative z-10">
+      <div 
+        className="p-6 md:p-8 flex flex-col flex-1 justify-between relative z-10"
+        style={{ 
+          transform: isMobile ? "none" : "translateZ(10px)", 
+          transformStyle: isMobile ? "flat" : "preserve-3d" 
+        }}
+      >
         <div>
           <h3 className="text-xl font-bold text-black mb-3 group-hover:text-red-500 transition-colors duration-300">
             <Link href={`/projects/${project.id}`}>
@@ -275,18 +386,73 @@ function ProjectCard({ project }: { project: Project }) {
 function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Project; shouldReduceMotion: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const checkViewport = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTouchDevice(
+        "ontouchstart" in window || navigator.maxTouchPoints > 0
+      );
+    };
+    checkViewport();
+    window.addEventListener("resize", checkViewport);
+    return () => window.removeEventListener("resize", checkViewport);
+  }, []);
+
+  // Mouse-based tilt values (max 2-3 degrees)
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 150 };
+  const rotateX = useSpring(useTransform(y, [0, 1], [2, -2]), springConfig);
+  const rotateY = useSpring(useTransform(x, [0, 1], [-2, 2]), springConfig);
+
+  const depthX1 = useSpring(useTransform(x, [0, 1], [-2, 2]), springConfig);
+  const depthY1 = useSpring(useTransform(y, [0, 1], [-2, 2]), springConfig);
+  const depthX2 = useSpring(useTransform(x, [0, 1], [-5, 5]), springConfig);
+  const depthY2 = useSpring(useTransform(y, [0, 1], [-5, 5]), springConfig);
+  const depthX3 = useSpring(useTransform(x, [0, 1], [3, -3]), springConfig);
+  const depthY3 = useSpring(useTransform(y, [0, 1], [3, -3]), springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isMobile || isTouchDevice || shouldReduceMotion || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    x.set((e.clientX - rect.left) / rect.width);
+    y.set((e.clientY - rect.top) / rect.height);
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0.5);
+    y.set(0.5);
+  };
 
   const renderFeaturedMockup = () => {
+    const moveX1 = isMobile || shouldReduceMotion ? 0 : depthX1;
+    const moveY1 = isMobile || shouldReduceMotion ? 0 : depthY1;
+    const moveX2 = isMobile || shouldReduceMotion ? 0 : depthX2;
+    const moveY2 = isMobile || shouldReduceMotion ? 0 : depthY2;
+    const moveX3 = isMobile || shouldReduceMotion ? 0 : depthX3;
+    const moveY3 = isMobile || shouldReduceMotion ? 0 : depthY3;
+
     return (
-      <div className="w-full h-full relative flex items-center justify-center">
+      <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
         {/* Base Layer: Grid & Glow */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
         <div className="absolute w-36 h-36 rounded-full bg-red-500/10 filter blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
         
         {/* Layer 1: Main Platform Feed mockup */}
-        <div
+        <motion.div
           style={{
-            transform: "rotate(-2deg)"
+            x: moveX1,
+            y: moveY1,
+            z: isMobile ? 0 : 10,
+            rotate: -2
           }}
           className="w-56 h-32 bg-white rounded-xl shadow-md border border-black/5 p-3 flex gap-2.5 z-10"
         >
@@ -317,12 +483,15 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
               <div className="w-6 h-2 rounded bg-black/5" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Layer 2: Chat Bubble avatar card (floats higher) */}
-        <div
+        {/* Layer 2: Chat Bubble avatar card */}
+        <motion.div
           style={{
-            transform: "rotate(2deg)"
+            x: moveX2,
+            y: moveY2,
+            z: isMobile ? 0 : 25,
+            rotate: 2
           }}
           className="absolute top-4 right-6 w-28 h-12 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-2 z-20"
         >
@@ -334,17 +503,20 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
             <div className="w-14 h-1 bg-black/5 rounded" />
           </div>
           <span className="w-2 h-2 rounded-full bg-emerald-500 self-start mt-0.5" />
-        </div>
+        </motion.div>
 
         {/* Layer 3: Marketplace Item Badge */}
-        <div
+        <motion.div
           style={{
-            transform: "rotate(-1deg)"
+            x: moveX3,
+            y: moveY3,
+            z: isMobile ? 0 : 18,
+            rotate: -1
           }}
           className="absolute bottom-4 left-6 px-3 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[9px] font-bold font-mono tracking-wider z-20"
         >
           MARKETPLACE
-        </div>
+        </motion.div>
       </div>
     );
   };
@@ -362,8 +534,15 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
         <div className="lg:col-span-6 flex justify-center items-center">
           <motion.div
             ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              rotateX: isMobile || shouldReduceMotion ? 0 : rotateX,
+              rotateY: isMobile || shouldReduceMotion ? 0 : rotateY,
+              transformStyle: isMobile ? "flat" : "preserve-3d",
+            }}
             whileHover={{ scale: 1.01 }}
-            className="group w-full max-w-lg aspect-[4/3] rounded-3xl glass-panel relative border border-black/5 flex items-center justify-center p-6 overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
+            className="group w-full max-w-lg aspect-[4/3] rounded-3xl glass-panel relative border border-black/5 flex items-center justify-center p-6 overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-white/40"
           >
             {/* Ambient reflection sheen loop */}
             {!shouldReduceMotion && (
@@ -381,8 +560,18 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
               />
             )}
 
+            {/* Spotlight reflection */}
+            {!isMobile && !isTouchDevice && !shouldReduceMotion && (
+              <motion.div
+                className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
+                style={{
+                  background: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, rgba(255, 59, 48, 0.04), transparent 80%)`,
+                }}
+              />
+            )}
+
             {/* Inner mockup container */}
-            <div className="w-full h-full relative">
+            <div className="w-full h-full relative" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
               {renderFeaturedMockup()}
             </div>
             
@@ -563,6 +752,16 @@ export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const [filter, setFilter] = useState("all");
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const sectionVariants = {
     hidden: { opacity: 0 },

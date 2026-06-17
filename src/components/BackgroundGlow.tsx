@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function BackgroundGlow() {
   const [mounted, setMounted] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Motion values to track normalized mouse coordinates [-0.5, 0.5]
   const mouseX = useMotionValue(0);
@@ -28,12 +29,14 @@ export default function BackgroundGlow() {
   useEffect(() => {
     setMounted(true);
 
-    const checkTouch = () => {
+    const checkDevice = () => {
       setIsTouchDevice(
         "ontouchstart" in window || navigator.maxTouchPoints > 0
       );
+      setIsMobile(window.innerWidth < 768);
     };
-    checkTouch();
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
 
     const handleMouseMove = (e: MouseEvent) => {
       // Coordinates normalized relative to viewport center
@@ -47,11 +50,14 @@ export default function BackgroundGlow() {
       window.addEventListener("mousemove", handleMouseMove);
     }
     return () => {
+      window.removeEventListener("resize", checkDevice);
       window.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isTouchDevice, mouseX, mouseY]);
 
   if (!mounted) return null;
+
+  const disableAnimations = isMobile;
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
@@ -61,10 +67,10 @@ export default function BackgroundGlow() {
       {/* Top Left Glow (Reacts to mouse) */}
       <motion.div
         style={{
-          x: isTouchDevice ? 0 : translateBlob1X,
-          y: isTouchDevice ? 0 : translateBlob1Y,
+          x: isTouchDevice || disableAnimations ? 0 : translateBlob1X,
+          y: isTouchDevice || disableAnimations ? 0 : translateBlob1Y,
         }}
-        animate={{
+        animate={disableAnimations ? {} : {
           scale: [1, 1.15, 1],
           opacity: [0.3, 0.45, 0.3],
         }}
@@ -79,10 +85,10 @@ export default function BackgroundGlow() {
       {/* Center Right Glow (Reacts to mouse) */}
       <motion.div
         style={{
-          x: isTouchDevice ? 0 : translateBlob2X,
-          y: isTouchDevice ? 0 : translateBlob2Y,
+          x: isTouchDevice || disableAnimations ? 0 : translateBlob2X,
+          y: isTouchDevice || disableAnimations ? 0 : translateBlob2Y,
         }}
-        animate={{
+        animate={disableAnimations ? {} : {
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.35, 0.2],
         }}
@@ -97,10 +103,10 @@ export default function BackgroundGlow() {
       {/* Bottom Left Glow (Reacts to mouse) */}
       <motion.div
         style={{
-          x: isTouchDevice ? 0 : translateBlob3X,
-          y: isTouchDevice ? 0 : translateBlob3Y,
+          x: isTouchDevice || disableAnimations ? 0 : translateBlob3X,
+          y: isTouchDevice || disableAnimations ? 0 : translateBlob3Y,
         }}
-        animate={{
+        animate={disableAnimations ? {} : {
           scale: [1, 1.1, 1],
           opacity: [0.15, 0.25, 0.15],
         }}
@@ -114,7 +120,7 @@ export default function BackgroundGlow() {
 
       {/* Large Subtle Ambient Shape 1 */}
       <motion.div
-        animate={{
+        animate={disableAnimations ? {} : {
           rotate: [0, 360],
           y: [0, -30, 0],
         }}
@@ -128,7 +134,7 @@ export default function BackgroundGlow() {
 
       {/* Large Subtle Ambient Shape 2 */}
       <motion.div
-        animate={{
+        animate={disableAnimations ? {} : {
           rotate: [360, 0],
           y: [0, 45, 0],
         }}

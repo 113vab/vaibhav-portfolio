@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { GraduationCap, Code, Briefcase, Calendar, Award } from "lucide-react";
-import { trackEvent } from "../utils/analytics";
 
 interface TimelineEvent {
   year: string;
@@ -60,18 +59,16 @@ const timelineEvents: TimelineEvent[] = [
 export default function TimelineSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const sectionTranslateY = useTransform(
-    scrollYProgress,
-    [0, 0.2, 0.8, 1],
-    [shouldReduceMotion ? 0 : 40, 0, 0, shouldReduceMotion ? 0 : -40]
-  );
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const getEventIcon = (type: TimelineEvent["type"]) => {
     switch (type) {
@@ -83,15 +80,6 @@ export default function TimelineSection() {
         return <Briefcase className="w-5 h-5 text-rose-600" />;
       default:
         return <Code className="w-5 h-5 text-red-500" />;
-    }
-  };
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.15
-      }
     }
   };
 
@@ -110,17 +98,24 @@ export default function TimelineSection() {
     <section
       id="timeline"
       ref={sectionRef}
-      className="py-28 md:py-36 px-6 md:px-12 relative border-t border-black/[0.03]"
+      className="py-28 md:py-36 px-6 md:px-12 relative border-t border-black/[0.03] overflow-hidden"
     >
       <motion.div
-        style={{
-          opacity: sectionOpacity,
-          y: sectionTranslateY
-        }}
-        variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
+        variants={{
+          hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 25 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: 0.8,
+              ease: [0.16, 1, 0.3, 1] as const,
+              staggerChildren: 0.15
+            }
+          }
+        }}
         className="max-w-7xl mx-auto z-10 relative"
       >
         {/* Section Heading */}
@@ -190,8 +185,12 @@ export default function TimelineSection() {
                 </p>
               </div>
 
-              {/* Event Details Card */}
-              <div className="md:col-span-9 p-6 rounded-3xl glass-panel border border-black/5 bg-white/70 hover:bg-white hover:border-red-500/15 hover:shadow-lg transition-all duration-300 w-full">
+              {/* Event Details Card (Floats slightly with realistic shadow transition) */}
+              <motion.div 
+                whileHover={isMobile || shouldReduceMotion ? {} : { y: -4, scale: 1.01 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="md:col-span-9 p-6 rounded-3xl glass-panel border border-black/5 bg-white/60 hover:bg-white hover:border-red-500/15 shadow-sm hover:shadow-xl hover:shadow-red-500/[0.005] transition-all duration-300 w-full"
+              >
                 <p className="text-sm text-gray-600 leading-relaxed font-normal mb-4">
                   {evt.desc}
                 </p>
@@ -202,7 +201,7 @@ export default function TimelineSection() {
                     </span>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           ))}
         </div>
