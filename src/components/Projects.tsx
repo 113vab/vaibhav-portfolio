@@ -9,6 +9,128 @@ import { projects } from "../data/projects";
 import { Project } from "../types/portfolio";
 import Magnetic from "./motion/Magnetic";
 
+const renderCampusConnectFlow = () => {
+  return (
+    <div className="w-full h-full p-2.5 relative flex flex-col justify-center items-center bg-black/[0.01]">
+      <div className="absolute w-24 h-24 rounded-full bg-red-500/5 filter blur-xl pointer-events-none" />
+      <div className="w-full max-w-sm aspect-[24/10] relative">
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 480 200" fill="none">
+          <path d="M 85,100 L 135,100" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          <path d="M 205,100 L 255,100" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          <path d="M 325,100 C 350,100 350,50 375,50" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          <path d="M 325,100 C 350,100 350,150 375,150" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+
+          <path d="M 85,100 L 135,100" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 205,100 L 255,100" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 325,100 C 350,100 350,50 375,50" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 325,100 C 350,100 350,150 375,150" stroke="url(#redGrad)" strokeWidth="2" strokeLinecap="round" />
+
+          <defs>
+            <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#f43f5e" stopOpacity="0.3" />
+            </linearGradient>
+          </defs>
+
+          <circle r="4" fill="#ef4444" className="shadow-[0_0_8px_#ef4444]">
+            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 85,100 L 135,100" />
+          </circle>
+          <circle r="4" fill="#f43f5e" className="shadow-[0_0_8px_#f43f5e]">
+            <animateMotion dur="2.5s" repeatCount="indefinite" path="M 205,100 L 255,100" />
+          </circle>
+          <circle r="3.5" fill="#3b82f6" className="shadow-[0_0_8px_#3b82f6]">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M 325,100 C 350,100 350,50 375,50" />
+          </circle>
+          <circle r="3.5" fill="#10b981" className="shadow-[0_0_8px_#10b981]">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M 325,100 C 350,100 350,150 375,150" />
+          </circle>
+        </svg>
+
+        <div style={{ left: "10.4%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-black/5 bg-white shadow-sm flex flex-col items-center justify-center min-w-[65px] pointer-events-none">
+          <span className="text-[6px] font-mono text-gray-400 font-bold uppercase tracking-wider">Client</span>
+          <span className="text-[9px] font-bold text-black font-sans leading-none mt-0.5">User</span>
+        </div>
+
+        <div style={{ left: "35.4%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-red-500/10 bg-white/95 shadow-sm flex flex-col items-center justify-center min-w-[65px] pointer-events-none">
+          <span className="text-[6px] font-mono text-red-500 font-bold uppercase tracking-wider">React</span>
+          <span className="text-[9px] font-bold text-black font-sans leading-none mt-0.5">Frontend</span>
+        </div>
+
+        <div style={{ left: "60.4%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-black/5 bg-white shadow-sm flex flex-col items-center justify-center min-w-[65px] pointer-events-none">
+          <span className="text-[6px] font-mono text-gray-400 font-bold uppercase tracking-wider">Express</span>
+          <span className="text-[9px] font-bold text-black font-sans leading-none mt-0.5">REST API</span>
+        </div>
+
+        <div style={{ left: "85.4%", top: "25%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-emerald-500/10 bg-white shadow-sm flex flex-col items-center justify-center min-w-[65px] pointer-events-none">
+          <span className="text-[6px] font-mono text-emerald-600 font-bold uppercase tracking-wider">MongoDB</span>
+          <span className="text-[8px] font-bold text-black font-mono leading-none mt-0.5">NoSQL</span>
+        </div>
+
+        <div style={{ left: "85.4%", top: "75%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-blue-500/10 bg-white shadow-sm flex flex-col items-center justify-center min-w-[65px] pointer-events-none">
+          <span className="text-[6px] font-mono text-blue-600 font-bold uppercase tracking-wider">Postgres</span>
+          <span className="text-[8px] font-bold text-black font-mono leading-none mt-0.5">Relational</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const renderHeritageAIFlow = () => {
+  return (
+    <div className="w-full h-full p-2.5 relative flex flex-col justify-center items-center bg-black/[0.01]">
+      <div className="absolute w-20 h-20 rounded-full bg-rose-500/5 filter blur-xl pointer-events-none" />
+      <div className="w-full max-w-sm aspect-[40/12] relative">
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 120" fill="none">
+          <path d="M 85,60 L 115,60" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          <path d="M 185,60 L 215,60" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+          <path d="M 285,60 L 315,60" stroke="#000" strokeOpacity="0.06" strokeWidth="2" strokeDasharray="4 4" />
+
+          <path d="M 85,60 L 115,60" stroke="url(#roseGrad)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 185,60 L 215,60" stroke="url(#roseGrad)" strokeWidth="2" strokeLinecap="round" />
+          <path d="M 285,60 L 315,60" stroke="url(#roseGrad)" strokeWidth="2" strokeLinecap="round" />
+
+          <defs>
+            <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#ec4899" stopOpacity="0.3" />
+            </linearGradient>
+          </defs>
+
+          <circle r="3.5" fill="#f43f5e" className="shadow-[0_0_8px_#f43f5e]">
+            <animateMotion dur="2s" repeatCount="indefinite" path="M 85,60 L 115,60" />
+          </circle>
+          <circle r="3.5" fill="#ec4899" className="shadow-[0_0_8px_#ec4899]">
+            <animateMotion dur="2.2s" repeatCount="indefinite" path="M 185,60 L 215,60" />
+          </circle>
+          <circle r="3.5" fill="#3b82f6" className="shadow-[0_0_8px_#3b82f6]">
+            <animateMotion dur="2.4s" repeatCount="indefinite" path="M 285,60 L 315,60" />
+          </circle>
+        </svg>
+
+        <div style={{ left: "12.5%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-black/5 bg-white shadow-sm flex flex-col items-center justify-center min-w-[60px] pointer-events-none">
+          <span className="text-[6px] font-mono text-gray-400 font-bold uppercase tracking-wider">Client</span>
+          <span className="text-[9px] font-bold text-black font-sans leading-none mt-0.5">User</span>
+        </div>
+
+        <div style={{ left: "37.5%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-rose-500/10 bg-white/95 shadow-sm flex flex-col items-center justify-center min-w-[60px] pointer-events-none">
+          <span className="text-[6px] font-mono text-rose-500 font-bold uppercase tracking-wider">React</span>
+          <span className="text-[9px] font-bold text-black font-sans leading-none mt-0.5">UI Platform</span>
+        </div>
+
+        <div style={{ left: "62.5%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-black/5 bg-white shadow-sm flex flex-col items-center justify-center min-w-[60px] pointer-events-none">
+          <span className="text-[6px] font-mono text-gray-400 font-bold uppercase tracking-wider">Maps</span>
+          <span className="text-[9px] font-bold text-black font-sans leading-none mt-0.5">Maps API</span>
+        </div>
+
+        <div style={{ left: "87.5%", top: "50%", transform: "translate(-50%, -50%)" }} className="absolute px-2 py-1 rounded-xl border border-amber-500/10 bg-white shadow-sm flex flex-col items-center justify-center min-w-[60px] pointer-events-none">
+          <span className="text-[6px] font-mono text-amber-600 font-bold uppercase tracking-wider">REST API</span>
+          <span className="text-[9px] font-bold text-black font-mono leading-none mt-0.5">Tourism Data</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const filterOptions = [
   { id: "all", label: "All Projects" },
   { id: "fullstack", label: "Fullstack" },
@@ -46,16 +168,6 @@ function ProjectCard({ project }: { project: Project }) {
   const rotateX = useSpring(useTransform(y, [0, 1], [2.5, -2.5]), springConfig);
   const rotateY = useSpring(useTransform(x, [0, 1], [-2.5, 2.5]), springConfig);
 
-  // Layered depth offsets for parallax mockup rendering (only for desktop)
-  const depthX1 = useSpring(useTransform(x, [0, 1], [-2.5, 2.5]), springConfig);
-  const depthY1 = useSpring(useTransform(y, [0, 1], [-2.5, 2.5]), springConfig);
-
-  const depthX2 = useSpring(useTransform(x, [0, 1], [-6, 6]), springConfig);
-  const depthY2 = useSpring(useTransform(y, [0, 1], [-6, 6]), springConfig);
-
-  const depthX3 = useSpring(useTransform(x, [0, 1], [4, -4]), springConfig);
-  const depthY3 = useSpring(useTransform(y, [0, 1], [4, -4]), springConfig);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile || isTouchDevice || shouldReduceMotion || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -77,159 +189,12 @@ function ProjectCard({ project }: { project: Project }) {
 
   // Render mock elements based on project title
   const renderVisualMockup = () => {
-    // Parallax values or flat static replacements for mobile
-    const moveX1 = isMobile || shouldReduceMotion ? 0 : depthX1;
-    const moveY1 = isMobile || shouldReduceMotion ? 0 : depthY1;
-    const moveX2 = isMobile || shouldReduceMotion ? 0 : depthX2;
-    const moveY2 = isMobile || shouldReduceMotion ? 0 : depthY2;
-    const moveX3 = isMobile || shouldReduceMotion ? 0 : depthX3;
-    const moveY3 = isMobile || shouldReduceMotion ? 0 : depthY3;
-
-    if (project.title === "Campus Connect") {
-      return (
-        <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
-          {/* Base Layer: Grid & Glow */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
-          <div className="absolute w-28 h-28 rounded-full bg-red-500/10 filter blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
-          
-          {/* Layer 1: Main Platform Feed mockup (tilted white card) */}
-          <motion.div
-            style={{
-              x: moveX1,
-              y: moveY1,
-              z: isMobile ? 0 : 8,
-              rotate: -3
-            }}
-            className="w-48 h-28 bg-white rounded-xl shadow-md border border-black/5 p-2.5 flex gap-2 z-10"
-          >
-            {/* Mock Channels Sidebar */}
-            <div className="w-12 border-r border-black/5 pr-1 flex flex-col gap-1.5">
-              <div className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <div className="w-7 h-2 rounded bg-black/10" />
-              </div>
-              <div className="w-8 h-1 rounded bg-black/5" />
-              <div className="w-10 h-1 rounded bg-black/5" />
-              <div className="w-7 h-1 rounded bg-black/5" />
-            </div>
-
-            {/* Mock feed content list */}
-            <div className="flex-1 flex flex-col justify-between">
-              <div className="flex items-center gap-1">
-                <div className="w-3.5 h-3.5 rounded-full bg-red-500/20" />
-                <div className="w-14 h-1.5 rounded bg-black/10" />
-              </div>
-              <div className="space-y-1 my-1">
-                <div className="w-full h-1 rounded bg-black/5" />
-                <div className="w-full h-1 rounded bg-black/5" />
-                <div className="w-4/5 h-1 rounded bg-black/5" />
-              </div>
-              <div className="flex justify-between items-center">
-                <div className="w-8 h-2.5 rounded bg-red-500/10" />
-                <div className="w-5 h-1.5 rounded bg-black/5" />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Layer 2: Chat Bubble avatar card */}
-          <motion.div
-            style={{
-              x: moveX2,
-              y: moveY2,
-              z: isMobile ? 0 : 20,
-              rotate: 1
-            }}
-            className="absolute top-5 right-10 w-24 h-11 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-1.5 z-20"
-          >
-            <div className="w-5.5 h-5.5 rounded-full bg-rose-500/20 flex items-center justify-center text-[7px] font-bold text-rose-600 font-mono">
-              VV
-            </div>
-            <div className="flex-1 space-y-1">
-              <div className="w-10 h-1 bg-black/15 rounded" />
-              <div className="w-12 h-1 bg-black/5 rounded" />
-            </div>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 self-start mt-0.5" />
-          </motion.div>
-
-          {/* Layer 3: Marketplace Item Badge */}
-          <motion.div
-            style={{
-              x: moveX3,
-              y: moveY3,
-              z: isMobile ? 0 : 12,
-              rotate: -1
-            }}
-            className="absolute bottom-5 left-8 px-2.5 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[8px] font-bold font-mono tracking-wider z-20"
-          >
-            MARKETPLACE
-          </motion.div>
-        </div>
-      );
+    if (project.title === "Campus Connect" || project.id === 1) {
+      return renderCampusConnectFlow();
     }
-
-    if (project.title === "SIH 2024 Heritage Tourism Platform") {
-      return (
-        <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
-          {/* Base Layer: Glow and Grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
-          <div className="absolute w-28 h-28 rounded-full bg-rose-500/10 filter blur-xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
-          
-          {/* Layer 1: Travel Card mockup */}
-          <motion.div
-            style={{
-              x: moveX1,
-              y: moveY1,
-              z: isMobile ? 0 : 8,
-              rotate: 2
-            }}
-            className="w-40 h-24 bg-white rounded-xl shadow-md border border-black/5 overflow-hidden flex flex-col z-10"
-          >
-            <div className="h-10 bg-gradient-to-br from-pink-200 to-rose-300 relative">
-              <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded bg-white/80 backdrop-blur-sm text-[6px] font-bold text-rose-700 font-mono">
-                TAJ MAHAL
-              </div>
-            </div>
-            <div className="p-2 flex-1 flex flex-col justify-between">
-              <div className="w-16 h-1.5 bg-black/15 rounded" />
-              <div className="flex justify-between items-center mt-1">
-                <div className="w-10 h-1 bg-black/5 rounded" />
-                <div className="w-6 h-2 bg-emerald-500/15 rounded" />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Layer 2: Map Pin */}
-          <motion.div
-            style={{
-              x: moveX2,
-              y: moveY2,
-              z: isMobile ? 0 : 20
-            }}
-            className="absolute top-6 left-16 w-8 h-8 rounded-full bg-white shadow-lg border border-black/5 flex items-center justify-center text-rose-500 z-20"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-            </span>
-          </motion.div>
-
-          {/* Layer 3: Rating/Review Badge */}
-          <motion.div
-            style={{
-              x: moveX3,
-              y: moveY3,
-              z: isMobile ? 0 : 15,
-              rotate: -2
-            }}
-            className="absolute bottom-6 right-16 px-2 py-1 bg-white rounded shadow-md border border-black/5 text-[7px] font-bold text-gray-700 font-mono flex items-center gap-0.5 z-20"
-          >
-            <span>⭐</span>
-            <span>4.9</span>
-          </motion.div>
-        </div>
-      );
+    if (project.title === "SIH 2024 Heritage Tourism Platform" || project.id === 2) {
+      return renderHeritageAIFlow();
     }
-
     // Fallback card mockup representation
     return (
       <div className="w-full h-full relative flex items-center justify-center">
@@ -411,13 +376,6 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
   const rotateX = useSpring(useTransform(y, [0, 1], [2, -2]), springConfig);
   const rotateY = useSpring(useTransform(x, [0, 1], [-2, 2]), springConfig);
 
-  const depthX1 = useSpring(useTransform(x, [0, 1], [-2, 2]), springConfig);
-  const depthY1 = useSpring(useTransform(y, [0, 1], [-2, 2]), springConfig);
-  const depthX2 = useSpring(useTransform(x, [0, 1], [-5, 5]), springConfig);
-  const depthY2 = useSpring(useTransform(y, [0, 1], [-5, 5]), springConfig);
-  const depthX3 = useSpring(useTransform(x, [0, 1], [3, -3]), springConfig);
-  const depthY3 = useSpring(useTransform(y, [0, 1], [3, -3]), springConfig);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isMobile || isTouchDevice || shouldReduceMotion || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -433,90 +391,17 @@ function FeaturedProjectShowcase({ project, shouldReduceMotion }: { project: Pro
   };
 
   const renderFeaturedMockup = () => {
-    const moveX1 = isMobile || shouldReduceMotion ? 0 : depthX1;
-    const moveY1 = isMobile || shouldReduceMotion ? 0 : depthY1;
-    const moveX2 = isMobile || shouldReduceMotion ? 0 : depthX2;
-    const moveY2 = isMobile || shouldReduceMotion ? 0 : depthY2;
-    const moveX3 = isMobile || shouldReduceMotion ? 0 : depthX3;
-    const moveY3 = isMobile || shouldReduceMotion ? 0 : depthY3;
-
+    if (project.title === "Campus Connect" || project.id === 1) {
+      return renderCampusConnectFlow();
+    }
+    if (project.title === "SIH 2024 Heritage Tourism Platform" || project.id === 2) {
+      return renderHeritageAIFlow();
+    }
     return (
-      <div className="w-full h-full relative flex items-center justify-center" style={{ transformStyle: isMobile ? "flat" : "preserve-3d" }}>
-        {/* Base Layer: Grid & Glow */}
+      <div className="w-full h-full relative flex items-center justify-center">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:14px_24px] opacity-20" />
         <div className="absolute w-36 h-36 rounded-full bg-red-500/10 filter blur-2xl group-hover:scale-150 transition-transform duration-700 pointer-events-none" />
-        
-        {/* Layer 1: Main Platform Feed mockup */}
-        <motion.div
-          style={{
-            x: moveX1,
-            y: moveY1,
-            z: isMobile ? 0 : 10,
-            rotate: -2
-          }}
-          className="w-56 h-32 bg-white rounded-xl shadow-md border border-black/5 p-3 flex gap-2.5 z-10"
-        >
-          {/* Mock Channels Sidebar */}
-          <div className="w-14 border-r border-black/5 pr-1.5 flex flex-col gap-2">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <div className="w-9 h-2.5 rounded bg-black/10" />
-            </div>
-            <div className="w-10 h-1.5 rounded bg-black/5" />
-            <div className="w-12 h-1.5 rounded bg-black/5" />
-            <div className="w-9 h-1.5 rounded bg-black/5" />
-          </div>
-
-          {/* Mock feed content list */}
-          <div className="flex-1 flex flex-col justify-between">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded-full bg-red-500/20" />
-              <div className="w-18 h-2 rounded bg-black/10" />
-            </div>
-            <div className="space-y-1.5 my-2">
-              <div className="w-full h-1.5 rounded bg-black/5" />
-              <div className="w-full h-1.5 rounded bg-black/5" />
-              <div className="w-5/6 h-1.5 rounded bg-black/5" />
-            </div>
-            <div className="flex justify-between items-center">
-              <div className="w-10 h-3 rounded bg-red-500/10" />
-              <div className="w-6 h-2 rounded bg-black/5" />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Layer 2: Chat Bubble avatar card */}
-        <motion.div
-          style={{
-            x: moveX2,
-            y: moveY2,
-            z: isMobile ? 0 : 25,
-            rotate: 2
-          }}
-          className="absolute top-4 right-6 w-28 h-12 bg-white rounded-lg shadow-lg border border-black/5 p-2 flex items-center gap-2 z-20"
-        >
-          <div className="w-6 h-6 rounded-full bg-rose-500/20 flex items-center justify-center text-[8px] font-bold text-rose-600 font-mono">
-            VV
-          </div>
-          <div className="flex-1 space-y-1">
-            <div className="w-12 h-1.5 bg-black/15 rounded" />
-            <div className="w-14 h-1 bg-black/5 rounded" />
-          </div>
-          <span className="w-2 h-2 rounded-full bg-emerald-500 self-start mt-0.5" />
-        </motion.div>
-
-        {/* Layer 3: Marketplace Item Badge */}
-        <motion.div
-          style={{
-            x: moveX3,
-            y: moveY3,
-            z: isMobile ? 0 : 18,
-            rotate: -1
-          }}
-          className="absolute bottom-4 left-6 px-3 py-1 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md shadow-lg text-[9px] font-bold font-mono tracking-wider z-20"
-        >
-          MARKETPLACE
-        </motion.div>
+        <Code className="w-12 h-12 text-red-500/20 group-hover:text-red-500/40 group-hover:scale-110 transition-all duration-500 relative z-10" />
       </div>
     );
   };

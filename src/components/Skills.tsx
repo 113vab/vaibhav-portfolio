@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Sparkles, Code, Terminal, ChevronRight } from "lucide-react";
+import { Sparkles, Terminal } from "lucide-react";
 import { currentlyExploring } from "../data/skills";
 
 interface GalaxyNode {
@@ -24,27 +24,39 @@ const galaxySkills: GalaxyNode[] = [
   { name: "Cybersecurity", category: "Network Security", desc: "Information security fundamentals, packet inspection, and secure coding practices.", color: "from-red-500 to-rose-600" },
 ];
 
+const subClusters: Record<string, string[]> = {
+  "Python": ["Data Analytics", "AI Pipelines", "Automation"],
+  "SQL": ["PostgreSQL", "Queries", "Schema Design"],
+  "Power BI": ["DAX Modeling", "Looker Studio", "KPI Reports"],
+  "React": ["Campus Connect", "UX Design", "Frontend Dev"],
+  "Node.js": ["Express.js", "REST APIs", "Routing"],
+  "MongoDB": ["Aggregations", "NoSQL Schema", "JSON Logs"],
+  "AWS": ["EC2 Instances", "S3 Storage", "Deploy Ops"],
+  "AI": ["LLMs Wrapper", "Prompts Engine", "Data Prep"],
+  "Cybersecurity": ["Network Scans", "InfoSec Basics", "Secure APIs"]
+};
+
 export default function Skills() {
   const containerRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [dimensions, setDimensions] = useState({ width: 600, height: 450 });
-  const [radius, setRadius] = useState(180);
+  const [dimensions, setDimensions] = useState({ width: 600, height: 460 });
+  const [radius, setRadius] = useState(150);
   const [activeSkill, setActiveSkill] = useState<GalaxyNode | null>(galaxySkills[0]);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Keep track of container sizes for perfect coordinates mapping
   useEffect(() => {
     const handleResize = () => {
       const w = containerRef.current?.clientWidth || 600;
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
       
-      let rad = 190;
-      let h = 480;
+      let rad = 175;
+      let h = 460;
       if (window.innerWidth < 480) {
-        rad = 95;
-        h = 280;
+        rad = 80;
+        h = 290;
       } else if (window.innerWidth < 768) {
-        rad = 125;
+        rad = 110;
         h = 340;
       }
       
@@ -59,10 +71,18 @@ export default function Skills() {
 
   const cx = dimensions.width / 2;
   const cy = dimensions.height / 2;
-  const titleWords = "Skills Galaxy".split(" ");
+  const titleWords = "Skill Constellation 2.0".split(" ");
+
+  // Find index of active skill to calculate coordinates for sub-nodes
+  const activeSkillIndex = activeSkill ? galaxySkills.findIndex(s => s.name === activeSkill.name) : -1;
+  const activeNodeAngle = activeSkillIndex !== -1 ? (activeSkillIndex * 2 * Math.PI) / galaxySkills.length : 0;
+  const anx = cx + radius * Math.cos(activeNodeAngle);
+  const any = cy + radius * Math.sin(activeNodeAngle);
+  const activeSubNodes = activeSkill ? subClusters[activeSkill.name] || [] : [];
+  const subNodeDistance = isMobile ? 40 : 55;
 
   return (
-    <section id="skills" className="py-28 md:py-36 px-6 md:px-12 relative overflow-hidden select-none">
+    <section id="skills" className="py-28 md:py-36 px-6 md:px-12 relative overflow-hidden select-none border-t border-black/[0.03]">
       <div className="max-w-7xl mx-auto z-10 relative">
         
         {/* Section Heading */}
@@ -100,43 +120,41 @@ export default function Skills() {
           <div className="lg:col-span-8 relative">
             <div 
               ref={containerRef} 
-              className="w-full relative rounded-3xl border border-black/[0.03] bg-gradient-to-b from-black/[0.01] to-transparent"
+              className="w-full relative rounded-3xl border border-black/[0.03] bg-gradient-to-b from-black/[0.01] to-transparent overflow-hidden"
               style={{ height: `${dimensions.height}px` }}
             >
-              {/* SVG Dynamic Network Connections */}
+              {/* SVG Constellation Connections */}
               <svg 
-                className="absolute inset-0 pointer-events-none w-full h-full"
+                className="absolute inset-0 pointer-events-none w-full h-full z-10"
                 viewBox={`0 0 ${dimensions.width} ${dimensions.height}`}
               >
                 <defs>
-                  <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="line-grad-const" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#ef4444" stopOpacity="0.4" />
                     <stop offset="100%" stopColor="#d1d5db" stopOpacity="0.1" />
                   </linearGradient>
                 </defs>
                 
-                {/* Connection lines from center to outer nodes */}
+                {/* 1. Main Hub to Skill connections */}
                 {galaxySkills.map((skill, idx) => {
                   const angle = (idx * 2 * Math.PI) / galaxySkills.length;
                   const nx = cx + radius * Math.cos(angle);
                   const ny = cy + radius * Math.sin(angle);
-                  const isHighlighted = activeSkill?.name === skill.name;
+                  const isActive = activeSkill?.name === skill.name;
 
                   return (
                     <g key={skill.name}>
-                      {/* Base Line */}
                       <line 
                         x1={cx} 
                         y1={cy} 
                         x2={nx} 
                         y2={ny} 
-                        stroke="url(#line-grad)" 
-                        strokeWidth={isHighlighted ? "2" : "1.2"} 
-                        opacity={isHighlighted ? "0.8" : "0.3"}
+                        stroke="url(#line-grad-const)" 
+                        strokeWidth={isActive ? "2" : "1.2"} 
+                        opacity={isActive ? "0.8" : "0.3"}
                         className="transition-all duration-300"
                       />
                       
-                      {/* Floating Light Pulse effect along connections (desktop only) */}
                       {!isMobile && !shouldReduceMotion && (
                         <motion.line
                           x1={cx}
@@ -149,19 +167,40 @@ export default function Skills() {
                           initial={{ strokeDashoffset: 100 }}
                           animate={{ strokeDashoffset: 0 }}
                           transition={{
-                            duration: 10 + idx * 2,
+                            duration: 12 + idx * 2,
                             repeat: Infinity,
                             ease: "linear",
                           }}
-                          opacity={isHighlighted ? "0.9" : "0.4"}
+                          opacity={isActive ? "0.9" : "0.3"}
                         />
                       )}
                     </g>
                   );
                 })}
+
+                {/* 2. Sub-constellation lines (sprouting from active skill node) */}
+                {activeSkill && activeSubNodes.map((_, idx) => {
+                  // Distribute sub-node angles radially outward from active node
+                  const offsetAngles = [-0.4, 0, 0.4];
+                  const subAngle = activeNodeAngle + offsetAngles[idx];
+                  const snx = anx + subNodeDistance * Math.cos(subAngle);
+                  const sny = any + subNodeDistance * Math.sin(subAngle);
+
+                  return (
+                    <motion.line
+                      key={idx}
+                      initial={{ x1: anx, y1: any, x2: anx, y2: any, opacity: 0 }}
+                      animate={{ x1: anx, y1: any, x2: snx, y2: sny, opacity: 0.8 }}
+                      transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                      stroke="#f43f5e"
+                      strokeWidth="1.2"
+                      strokeDasharray="3 3"
+                    />
+                  );
+                })}
               </svg>
 
-              {/* Center Node (VAIBHAV) */}
+              {/* Hub Node (VAIBHAV) */}
               <motion.div
                 style={{
                   left: `${cx}px`,
@@ -170,15 +209,14 @@ export default function Skills() {
                 className="absolute -translate-x-1/2 -translate-y-1/2 z-30"
                 whileHover={{ scale: 1.05 }}
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-red-500 to-rose-600 text-white font-extrabold text-[10px] sm:text-xs uppercase tracking-widest flex flex-col items-center justify-center border-2 border-white/25 shadow-lg shadow-red-500/20 select-none">
-                  <Sparkles className="w-3.5 h-3.5 mb-1.5 animate-pulse text-white/90" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-tr from-red-500 to-rose-600 text-white font-extrabold text-[9px] sm:text-[10px] uppercase tracking-widest flex flex-col items-center justify-center border-2 border-white/25 shadow-lg shadow-red-500/20 select-none">
+                  <Sparkles className="w-3.5 h-3.5 mb-1 animate-pulse text-white/90" />
                   <span>Vaibhav</span>
                 </div>
-                {/* Glow ring */}
-                <div className="absolute inset-0 rounded-full border border-red-500/20 animate-ping opacity-20 pointer-events-none scale-110" />
+                <div className="absolute inset-0 rounded-full border border-red-500/20 animate-ping opacity-25 pointer-events-none scale-110" />
               </motion.div>
 
-              {/* Connected Skills Nodes */}
+              {/* Outer Primary Skill Nodes */}
               {galaxySkills.map((skill, idx) => {
                 const angle = (idx * 2 * Math.PI) / galaxySkills.length;
                 const nx = cx + radius * Math.cos(angle);
@@ -193,18 +231,41 @@ export default function Skills() {
                       top: `${ny}px`,
                     }}
                     onClick={() => setActiveSkill(skill)}
-                    whileHover={{ scale: 1.05, y: ny - 2 }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.98 }}
-                    className={`absolute -translate-x-1/2 -translate-y-1/2 px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-2xl border text-[10px] sm:text-xs font-bold font-mono transition-all duration-300 z-20 flex flex-col items-center gap-0.5 cursor-pointer shadow-sm ${
+                    className={`absolute -translate-x-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-xl border text-[10px] sm:text-xs font-bold font-mono transition-all duration-300 z-20 cursor-pointer shadow-sm ${
                       isActive
-                        ? "bg-gradient-to-r from-red-500/15 to-rose-500/15 border-red-500/30 text-red-600 shadow-md shadow-red-500/5 font-extrabold"
-                        : "bg-white/70 border-black/5 text-gray-500 hover:text-black hover:border-black/10 hover:bg-white"
+                        ? "bg-gradient-to-r from-red-500/15 to-rose-500/15 border-red-500/30 text-red-600 font-extrabold shadow-md"
+                        : "bg-white/80 border-black/5 text-gray-500 hover:text-black hover:border-black/10 hover:bg-white"
                     }`}
                   >
-                    <span>{skill.name}</span>
+                    {skill.name}
                   </motion.button>
                 );
               })}
+
+              {/* Sub-Constellation Nodes (Sprouts from the active node) */}
+              <AnimatePresence>
+                {activeSkill && activeSubNodes.map((subName, idx) => {
+                  const offsetAngles = [-0.4, 0, 0.4];
+                  const subAngle = activeNodeAngle + offsetAngles[idx];
+                  const snx = anx + subNodeDistance * Math.cos(subAngle);
+                  const sny = any + subNodeDistance * Math.sin(subAngle);
+
+                  return (
+                    <motion.div
+                      key={`${activeSkill.name}-${subName}`}
+                      initial={{ left: anx, top: any, scale: 0, opacity: 0 }}
+                      animate={{ left: snx, top: sny, scale: 1, opacity: 1 }}
+                      exit={{ left: anx, top: any, scale: 0, opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 120, damping: 14, delay: idx * 0.04 }}
+                      className="absolute -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded-md bg-red-50 border border-red-200 text-[8px] sm:text-[9px] font-bold font-mono text-red-600 shadow-sm z-30"
+                    >
+                      {subName}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -227,9 +288,21 @@ export default function Skills() {
                     <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
                     {activeSkill.name}
                   </h3>
-                  <p className="text-xs sm:text-sm text-gray-500 leading-relaxed font-normal">
+                  <p className="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal mb-5">
                     {activeSkill.desc}
                   </p>
+                  
+                  {/* Skill Cluster highlights */}
+                  <div className="flex flex-col gap-2 pt-4 border-t border-black/5 text-[11px]">
+                    <span className="font-mono text-gray-400 font-bold uppercase tracking-wider">Sub-clusters:</span>
+                    <div className="flex gap-1.5 flex-wrap">
+                      {activeSubNodes.map((sub) => (
+                        <span key={sub} className="px-2 py-0.5 rounded-md bg-black/3 text-gray-600 border border-black/5 font-mono">
+                          {sub}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -238,7 +311,7 @@ export default function Skills() {
             <div className="p-6 rounded-3xl border border-black/[0.03] bg-black/[0.01] flex flex-col gap-4">
               <div>
                 <h4 className="text-xs font-bold text-black uppercase tracking-wider font-mono flex items-center gap-1">
-                  <Terminal className="w-3.5 h-3.5 text-red-500" /> Currently Exploring
+                  <Terminal className="w-3.5 h-3.5 text-red-500" /> System Focus
                 </h4>
                 <p className="text-[10px] text-gray-400 font-normal mt-1">
                   Concept models and tech stacks currently under active study.

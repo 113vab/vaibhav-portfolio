@@ -14,6 +14,8 @@ import Certifications from "../components/Certifications";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import RecruiterDashboard from "../components/RecruiterDashboard";
+import CommandPalette from "../components/CommandPalette";
+import DashboardVisualizations from "../components/DashboardVisualizations";
 
 export default function Home() {
   const [recruiterMode, setRecruiterMode] = useState(false);
@@ -60,6 +62,9 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
 
+      {/* Command Palette for Quick Search / Actions */}
+      <CommandPalette recruiterMode={recruiterMode} setRecruiterMode={setRecruiterMode} />
+
       {/* Background Animated Atmosphere */}
       <BackgroundGlow />
 
@@ -88,6 +93,9 @@ export default function Home() {
 
           {/* Projects Section */}
           <Projects />
+
+          {/* Performance analytics & live data visualizations */}
+          <DashboardVisualizations />
 
           {/* GitHub Repositories Showcase */}
           <GithubSection />

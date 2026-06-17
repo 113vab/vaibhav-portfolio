@@ -1,7 +1,7 @@
 "use client";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import { ArrowDown, Sparkles, FolderGit2, FileDown, Mail } from "lucide-react";
+import { ArrowDown, Sparkles, FolderGit2, FileDown, Mail, Calendar, Briefcase, GitBranch, Target, Terminal } from "lucide-react";
 import { profile } from "../data/profile";
 import { siteConfig } from "../data/siteConfig";
 import Magnetic from "./motion/Magnetic";
@@ -14,30 +14,34 @@ export default function Hero() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1024); // Use 1024 to ensure columns have room on tablets/desktops
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
   
-  // Layered depth translations
-  const badgeY = useTransform(scrollY, [0, 500], [0, 20]);
-  const headlineY = useTransform(scrollY, [0, 500], [0, 45]);
-  const descY = useTransform(scrollY, [0, 500], [0, 35]);
-  const ctaY = useTransform(scrollY, [0, 500], [0, 25]);
-  const skillsY = useTransform(scrollY, [0, 500], [0, 15]);
+  // Parallax shifts for floating command center cards on desktop
+  const githubY = useTransform(scrollY, [0, 500], [0, -50]);
+  const internshipY = useTransform(scrollY, [0, 500], [0, 25]);
+  const focusY = useTransform(scrollY, [0, 500], [0, -70]);
+  const skillsYPanel = useTransform(scrollY, [0, 500], [0, 35]);
+
+  // General text layers parallax
+  const badgeY = useTransform(scrollY, [0, 500], [0, 15]);
+  const headlineY = useTransform(scrollY, [0, 500], [0, 35]);
+  const descY = useTransform(scrollY, [0, 500], [0, 25]);
+  const ctaY = useTransform(scrollY, [0, 500], [0, 15]);
   const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
-  // Mobile bypass for performance
+  // Mobile bypass
   const finalBadgeY = isMobile || shouldReduceMotion ? 0 : badgeY;
   const finalHeadlineY = isMobile || shouldReduceMotion ? 0 : headlineY;
   const finalDescY = isMobile || shouldReduceMotion ? 0 : descY;
   const finalCtaY = isMobile || shouldReduceMotion ? 0 : ctaY;
-  const finalSkillsY = isMobile || shouldReduceMotion ? 0 : skillsY;
   const finalOpacity = isMobile ? 1 : opacity;
 
-  // Entrance animations sequence
+  // Stagger sequence
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -100,30 +104,6 @@ export default function Hero() {
     },
   };
 
-  const skillsContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.5,
-        staggerChildren: 0.06,
-      },
-    },
-  };
-
-  const skillBadgeVariants = {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-      },
-    },
-  };
-
   const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault();
     const element = document.getElementById(targetId);
@@ -144,71 +124,123 @@ export default function Hero() {
   const headlineWords = profile.headline.split(" ");
   const subHeadlineWords = profile.subHeadline.split(" ");
 
+  // Custom components for panels to avoid duplicating code
+  const renderGithubPanel = () => (
+    <div className="flex flex-col gap-2 text-left">
+      <div className="flex items-center justify-between">
+        <span className="text-[9px] font-bold text-gray-400 font-mono tracking-wider uppercase flex items-center gap-1">
+          <GitBranch className="w-3.5 h-3.5 text-red-500" /> GitHub Commits
+        </span>
+        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+      </div>
+      {/* Simulated GitHub heat map grid */}
+      <div className="grid grid-cols-7 gap-1 mt-1">
+        {Array.from({ length: 28 }).map((_, idx) => {
+          const intensities = ["bg-black/5", "bg-red-500/10", "bg-red-500/25", "bg-red-500/40", "bg-red-500/60"];
+          const bg = intensities[Math.floor(Math.sin(idx + 3) * 2.5) + 2] || "bg-black/5";
+          return <span key={idx} className={`w-3.5 h-3.5 rounded-sm ${bg}`} />;
+        })}
+      </div>
+    </div>
+  );
+
+  const renderInternshipPanel = () => (
+    <div className="flex flex-col gap-1.5 text-left">
+      <div className="flex items-center justify-between">
+        <span className="text-[9px] font-bold text-gray-400 font-mono tracking-wider uppercase flex items-center gap-1">
+          <Briefcase className="w-3.5 h-3.5 text-rose-500" /> Internship Status
+        </span>
+        <span className="text-[8px] font-bold text-rose-600 bg-rose-500/10 border border-rose-500/15 px-1.5 py-0.5 rounded">ACTIVE</span>
+      </div>
+      <h4 className="text-xs font-bold text-black mt-0.5">Data Analyst Intern</h4>
+      <p className="text-[10px] text-gray-500 font-medium">Elevate Labs • Monitoring Growth KPIs & Sales dashboards</p>
+    </div>
+  );
+
+  const renderFocusPanel = () => (
+    <div className="flex flex-col gap-1.5 text-left">
+      <span className="text-[9px] font-bold text-gray-400 font-mono tracking-wider uppercase flex items-center gap-1">
+        <Target className="w-3.5 h-3.5 text-red-500 animate-pulse" /> Active Focus
+      </span>
+      <h4 className="text-xs font-bold text-black mt-0.5">Campus Connect Platform</h4>
+      <p className="text-[10px] text-gray-500 font-medium">Building real-time forums & student listings portal</p>
+    </div>
+  );
+
+  const renderSkillsPanel = () => (
+    <div className="flex flex-col gap-1.5 text-left font-mono">
+      <span className="text-[9px] font-bold text-gray-400 tracking-wider uppercase flex items-center gap-1">
+        <Terminal className="w-3.5 h-3.5 text-gray-500" /> System Metrics
+      </span>
+      <div className="flex flex-col gap-0.5 text-[10px] text-gray-600 mt-0.5">
+        <div className="flex justify-between border-b border-black/5 pb-0.5">
+          <span>Python:</span>
+          <span className="font-bold text-black">85%</span>
+        </div>
+        <div className="flex justify-between border-b border-black/5 pb-0.5">
+          <span>SQL DB:</span>
+          <span className="font-bold text-black">92%</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Power BI:</span>
+          <span className="font-bold text-black">90%</span>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6 md:px-12 overflow-hidden bg-gradient-to-b from-red-50/40 via-rose-50/20 to-white"
+      className="relative min-h-screen flex items-center justify-center pt-28 pb-12 px-6 md:px-12 overflow-hidden bg-gradient-to-b from-red-50/40 via-rose-50/20 to-white select-none"
     >
-      {/* Layer 1: Background Atmosphere is BackgroundGlow and section gradients */}
-
-      {/* Layer 2: Floating Glass Cards (Hidden on mobile to ensure performance) */}
+      {/* Layer 2: Floating Command Center Panels (Hidden on mobile) */}
       {!isMobile && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-          {/* Analytics Chart Mockup Card */}
+          
+          {/* GitHub Activity Grid (Left Top) */}
           <motion.div
-            animate={{
-              y: [0, -12, 0],
-              rotate: [-1, 1, -1],
+            style={{ 
+              y: shouldReduceMotion ? 0 : githubY,
+              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)"
             }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            className="absolute top-[20%] left-[8%] w-44 p-4 rounded-2xl glass-panel border border-white/20 shadow-xl backdrop-blur-lg flex flex-col gap-2 bg-white/40"
-            style={{
-              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)",
-            }}
+            className="absolute top-[20%] left-[4%] w-48 p-4 rounded-2xl border border-white/20 bg-white/40 shadow-xl backdrop-blur-lg flex flex-col gap-2 pointer-events-auto glass-panel"
           >
-            <div className="flex justify-between items-center">
-              <div className="w-10 h-2 bg-black/10 rounded" />
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            </div>
-            <div className="flex gap-1.5 items-end h-10 mt-1">
-              <div className="w-full h-[60%] bg-red-500/20 rounded-sm" />
-              <div className="w-full h-[80%] bg-red-500/30 rounded-sm" />
-              <div className="w-full h-[40%] bg-red-500/20 rounded-sm" />
-              <div className="w-full h-[95%] bg-gradient-to-t from-red-500 to-rose-500 rounded-sm" />
-            </div>
+            {renderGithubPanel()}
           </motion.div>
 
-          {/* Database Query Mockup Card */}
+          {/* Internship Status Card (Right Top) */}
           <motion.div
-            animate={{
-              y: [0, 15, 0],
-              rotate: [1, -1, 1],
+            style={{ 
+              y: shouldReduceMotion ? 0 : internshipY,
+              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)"
             }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1,
-            }}
-            className="absolute bottom-[25%] right-[8%] w-48 p-4 rounded-2xl glass-panel border border-white/20 shadow-xl backdrop-blur-lg flex flex-col gap-1.5 font-mono text-[9px] text-gray-400 bg-white/40"
-            style={{
-              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)",
-            }}
+            className="absolute top-[22%] right-[4%] w-48 p-4 rounded-2xl border border-white/20 bg-white/40 shadow-xl backdrop-blur-lg flex flex-col gap-2 pointer-events-auto glass-panel"
           >
-            <div className="flex gap-1 mb-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-              <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-            </div>
-            <div><span className="text-red-500">const</span>{" query = () => {"}</div>
-            <div className="pl-3">return db.select()</div>
-            <div className="pl-6 text-rose-500">.from(<span className="text-gray-500">"users"</span>)</div>
-            <div>{"}"}</div>
+            {renderInternshipPanel()}
+          </motion.div>
+
+          {/* Focus Card (Left Bottom) */}
+          <motion.div
+            style={{ 
+              y: shouldReduceMotion ? 0 : focusY,
+              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)"
+            }}
+            className="absolute bottom-[28%] left-[4%] w-48 p-4 rounded-2xl border border-white/20 bg-white/40 shadow-xl backdrop-blur-lg flex flex-col gap-2 pointer-events-auto glass-panel"
+          >
+            {renderFocusPanel()}
+          </motion.div>
+
+          {/* Skills Card (Right Bottom) */}
+          <motion.div
+            style={{ 
+              y: shouldReduceMotion ? 0 : skillsYPanel,
+              boxShadow: "0 20px 40px -15px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.6)"
+            }}
+            className="absolute bottom-[26%] right-[4%] w-48 p-4 rounded-2xl border border-white/20 bg-white/40 shadow-xl backdrop-blur-lg flex flex-col gap-2 pointer-events-auto glass-panel"
+          >
+            {renderSkillsPanel()}
           </motion.div>
         </div>
       )}
@@ -219,7 +251,7 @@ export default function Hero() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-5xl mx-auto w-full flex flex-col items-center justify-center text-center z-10 relative"
+        className="max-w-4xl mx-auto w-full flex flex-col items-center justify-center text-center z-10 relative"
       >
         {/* Layer 3: Status Badge */}
         <motion.div
@@ -388,35 +420,26 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Floating Skill Badges */}
-        <motion.div
-          variants={skillsContainerVariants}
-          style={{ y: finalSkillsY }}
-          className="flex flex-wrap justify-center items-center gap-3 mt-16 max-w-xl px-4"
-        >
-          {["Python", "SQL", "React", "Power BI"].map((skill, index) => (
-            <motion.div
-              key={skill}
-              variants={skillBadgeVariants}
-              className="text-[11px] sm:text-xs font-semibold text-gray-500 font-mono px-3.5 py-1.5 rounded-full border border-black/5 bg-white/40 shadow-sm backdrop-blur-md"
-            >
-              <motion.div
-                animate={shouldReduceMotion || isMobile ? {} : {
-                  y: [0, index % 2 === 0 ? -6 : -4, 0],
-                  x: [0, index % 2 === 0 ? 4 : -4, 0],
-                  transition: {
-                    duration: index % 2 === 0 ? 6 : 7,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: index * 0.2
-                  }
-                }}
-              >
-                {skill}
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* STATIC COMMAND CENTER GRID FOR MOBILE SCREEN SIZES */}
+        {isMobile && (
+          <motion.div
+            variants={ctaContainerVariants}
+            className="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full px-4"
+          >
+            <div className="p-4 rounded-2xl border border-black/5 bg-white/40 shadow-sm glass-panel">
+              {renderGithubPanel()}
+            </div>
+            <div className="p-4 rounded-2xl border border-black/5 bg-white/40 shadow-sm glass-panel">
+              {renderInternshipPanel()}
+            </div>
+            <div className="p-4 rounded-2xl border border-black/5 bg-white/40 shadow-sm glass-panel">
+              {renderFocusPanel()}
+            </div>
+            <div className="p-4 rounded-2xl border border-black/5 bg-white/40 shadow-sm glass-panel">
+              {renderSkillsPanel()}
+            </div>
+          </motion.div>
+        )}
       </motion.div>
 
       {/* Down Scroll Indicator */}

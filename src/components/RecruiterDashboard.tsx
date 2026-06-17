@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { GraduationCap, Briefcase, Code, Download, Mail, Phone, ExternalLink, Sparkles, CheckCircle2, Copy, Check, Terminal, ShieldAlert } from "lucide-react";
+import { GraduationCap, Briefcase, Code, Download, Mail, Phone, ExternalLink, Sparkles, CheckCircle2, Copy, Check, Terminal, ShieldAlert, Trophy } from "lucide-react";
 import { useState } from "react";
 import { profile } from "../data/profile";
 import { siteConfig } from "../data/siteConfig";
@@ -71,6 +71,84 @@ export default function RecruiterDashboard({ onExit }: RecruiterDashboardProps) 
             </>
           )}
         </button>
+      </div>
+
+      {/* Premium KPI Telemetry Cards Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[
+          {
+            title: "Internship Metrics",
+            value: "2",
+            subtitle: "Completed Positions",
+            details: "Elevate Labs & Excelerate",
+            icon: <Briefcase className="w-5 h-5 text-red-500" />,
+            color: "from-red-500/10 to-rose-500/5",
+            borderColor: "border-red-500/10"
+          },
+          {
+            title: "Project Metrics",
+            value: "4+",
+            subtitle: "Core Web Products",
+            details: "Campus Connect, HeritageAI",
+            icon: <Code className="w-5 h-5 text-rose-500" />,
+            color: "from-rose-500/10 to-pink-500/5",
+            borderColor: "border-rose-500/10"
+          },
+          {
+            title: "Certification Metrics",
+            value: "5+",
+            subtitle: "Verified Credentials",
+            details: "AWS Academy, Python, DBMS",
+            icon: <CheckCircle2 className="w-5 h-5 text-emerald-500" />,
+            color: "from-emerald-500/10 to-teal-500/5",
+            borderColor: "border-emerald-500/10"
+          },
+          {
+            title: "Achievement Counters",
+            value: "Winner",
+            subtitle: "SIH '24 Finalist",
+            details: "Ministry of Education, GoI",
+            icon: <Trophy className="w-5 h-5 text-amber-500" />,
+            color: "from-amber-500/10 to-yellow-500/5",
+            borderColor: "border-amber-500/10"
+          }
+        ].map((kpi, idx) => (
+          <motion.div
+            key={kpi.title}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: idx * 0.05 }}
+            whileHover={shouldReduceMotion ? {} : { y: -4, scale: 1.01 }}
+            className={`rounded-3xl border ${kpi.borderColor} bg-white/40 p-5 shadow-sm glass-panel flex flex-col justify-between relative overflow-hidden transition-all duration-350`}
+          >
+            {/* Ambient visual glow */}
+            <div className={`absolute -right-6 -top-6 w-16 h-16 rounded-full bg-gradient-to-br ${kpi.color} filter blur-xl opacity-60 pointer-events-none`} />
+            
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex flex-col">
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest font-mono">
+                  {kpi.title}
+                </span>
+                <span className="text-[10px] text-gray-500 font-semibold mt-0.5">
+                  {kpi.subtitle}
+                </span>
+              </div>
+              <div className="p-2 rounded-xl bg-black/[0.02] border border-black/[0.04]">
+                {kpi.icon}
+              </div>
+            </div>
+
+            <div className="flex items-baseline gap-1 mt-2">
+              <span className="text-3xl font-extrabold text-black tracking-tight leading-none">
+                {kpi.value}
+              </span>
+            </div>
+
+            <p className="text-[10px] text-gray-400 font-medium font-mono mt-3 truncate">
+              {kpi.details}
+            </p>
+          </motion.div>
+        ))}
       </div>
 
       {/* Grid Dashboard Layout */}
