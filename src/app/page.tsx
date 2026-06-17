@@ -6,7 +6,7 @@ import About from "../components/About";
 import TimelineSection from "../components/Timeline";
 import Skills from "../components/Skills";
 import Projects from "../components/Projects";
-// import GithubSection from "../components/Github";
+import GithubSection from "../components/Github";
 import Certifications from "../components/Certifications";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
@@ -62,7 +62,7 @@ export default function Home() {
         <Projects />
 
         {/* GitHub Repositories Showcase */}
-        {/* <GithubSection /> */}
+        <GithubSection />
 
         {/* Certifications Section */}
         <Certifications />
@@ -76,6 +76,7 @@ export default function Home() {
     </>
   );
 }
+
 
 
 
