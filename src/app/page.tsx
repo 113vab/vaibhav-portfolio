@@ -2,7 +2,7 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 // import RecruiterSummary from "../components/RecruiterSummary";
-// import About from "../components/About";
+import About from "../components/About";
 // import TimelineSection from "../components/Timeline";
 // import Skills from "../components/Skills";
 // import Projects from "../components/Projects";
@@ -50,7 +50,7 @@ export default function Home() {
         {/* <RecruiterSummary /> */}
 
         {/* About Section */}
-        {/* <About /> */}
+        <About />
 
         {/* Career Timeline Section */}
         {/* <TimelineSection /> */}
@@ -76,4 +76,5 @@ export default function Home() {
     </>
   );
 }
+
 
