@@ -1,15 +1,15 @@
-import BackgroundGlow from "../components/BackgroundGlow";
+// import BackgroundGlow from "../components/BackgroundGlow";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import RecruiterSummary from "../components/RecruiterSummary";
-import About from "../components/About";
-import TimelineSection from "../components/Timeline";
-import Skills from "../components/Skills";
-import Projects from "../components/Projects";
-import GithubSection from "../components/Github";
-import Certifications from "../components/Certifications";
-import Contact from "../components/Contact";
-import Footer from "../components/Footer";
+// import RecruiterSummary from "../components/RecruiterSummary";
+// import About from "../components/About";
+// import TimelineSection from "../components/Timeline";
+// import Skills from "../components/Skills";
+// import Projects from "../components/Projects";
+// import GithubSection from "../components/Github";
+// import Certifications from "../components/Certifications";
+// import Contact from "../components/Contact";
+// import Footer from "../components/Footer";
 
 export default function Home() {
   const personSchema = {
@@ -36,7 +36,7 @@ export default function Home() {
       />
 
       {/* Background Animated Atmosphere */}
-      <BackgroundGlow />
+      {/* <BackgroundGlow /> */}
 
       {/* Floating Header Navigation */}
       <Navbar />
@@ -47,32 +47,33 @@ export default function Home() {
         <Hero />
 
         {/* Recruiter-friendly summary card */}
-        <RecruiterSummary />
+        {/* <RecruiterSummary /> */}
 
         {/* About Section */}
-        <About />
+        {/* <About /> */}
 
         {/* Career Timeline Section */}
-        <TimelineSection />
+        {/* <TimelineSection /> */}
 
         {/* Skills Section */}
-        <Skills />
+        {/* <Skills /> */}
 
         {/* Projects Section */}
-        <Projects />
+        {/* <Projects /> */}
 
         {/* GitHub Repositories Showcase */}
-        <GithubSection />
+        {/* <GithubSection /> */}
 
         {/* Certifications Section */}
-        <Certifications />
+        {/* <Certifications /> */}
 
         {/* Contact Section */}
-        <Contact />
+        {/* <Contact /> */}
       </main>
 
       {/* Footer */}
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 }
+
