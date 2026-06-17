@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import BackgroundGlow from "../components/BackgroundGlow";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
@@ -10,8 +13,30 @@ import GithubSection from "../components/Github";
 import Certifications from "../components/Certifications";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
+import RecruiterDashboard from "../components/RecruiterDashboard";
 
 export default function Home() {
+  const [recruiterMode, setRecruiterMode] = useState(false);
+
+  useEffect(() => {
+    // Check if '?recruiter=true' is in the URL search params on mount
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("recruiter") === "true") {
+        setRecruiterMode(true);
+      }
+    }
+  }, []);
+
+  const handleExitRecruiterMode = () => {
+    setRecruiterMode(false);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("recruiter");
+      window.history.pushState({}, "", url.toString());
+    }
+  };
+
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -39,43 +64,48 @@ export default function Home() {
       <BackgroundGlow />
 
       {/* Floating Header Navigation */}
-      <Navbar />
+      <Navbar recruiterMode={recruiterMode} setRecruiterMode={setRecruiterMode} />
 
-      {/* Single Page Layout Sections */}
-      <main className="flex-1 w-full max-w-7xl mx-auto z-10 flex flex-col">
-        {/* Hero Section */}
-        <Hero />
+      {/* Conditionally Render Recruiter Dashboard or Standard Portfolio Sections */}
+      {recruiterMode ? (
+        <RecruiterDashboard onExit={handleExitRecruiterMode} />
+      ) : (
+        <main className="flex-1 w-full max-w-7xl mx-auto z-10 flex flex-col">
+          {/* Hero Section */}
+          <Hero />
 
-        {/* Recruiter-friendly summary card */}
-        <RecruiterSummary />
+          {/* Recruiter-friendly summary card */}
+          <RecruiterSummary />
 
-        {/* About Section */}
-        <About />
+          {/* About Section */}
+          <About />
 
-        {/* Career Timeline Section */}
-        <TimelineSection />
+          {/* Career Timeline Section */}
+          <TimelineSection />
 
-        {/* Skills Section */}
-        <Skills />
+          {/* Skills Section */}
+          <Skills />
 
-        {/* Projects Section */}
-        <Projects />
+          {/* Projects Section */}
+          <Projects />
 
-        {/* GitHub Repositories Showcase */}
-        <GithubSection />
+          {/* GitHub Repositories Showcase */}
+          <GithubSection />
 
-        {/* Certifications Section */}
-        <Certifications />
+          {/* Certifications Section */}
+          <Certifications />
 
-        {/* Contact Section */}
-        <Contact />
-      </main>
+          {/* Contact Section */}
+          <Contact />
+        </main>
+      )}
 
       {/* Footer */}
       <Footer />
     </>
   );
 }
+
 
 
 
